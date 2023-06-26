@@ -23,12 +23,18 @@ print('Creating predictions...')
 ''' Interpret the prediction '''
 while True:
     print('\nHow do you want to interpret the predictions?')
+    
+    # Prepare available options
     avail_opts = ""
     for choice in XAI_CHOICES:
-        avail_opts += choice.lower().strip() + ', '
+        if choice != XAI_CHOICES[len(XAI_CHOICES)-1]:
+            avail_opts += choice.lower().strip() + ', '
+        else:
+            avail_opts += choice.lower().strip()
 
-    opt = input(f'Choices: {avail_opts}quit: ').lower().strip()
+    opt = input(f'Choices: {avail_opts}, quit: ').lower().strip()
 
+    # Show XAI interpretation or quit
     if opt == 'quit':
         print('Goodbye')
         break;
@@ -42,5 +48,4 @@ while True:
         # Grad-CAM
         pass
     else:
-        # Ask again. 
         print('Invalid choice. Try again.')
