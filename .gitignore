@@ -378,4 +378,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Exclude entire datasets
+**/MICCAI_BraTS_2018_Data_Training/
+
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,python,jupyternotebooks,vim,visualstudiocode,git,eclipse
