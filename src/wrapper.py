@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import tensorflow as tf
-from tensorflow.keras.models import load_model
 import numpy as np
 import cv2
 import imutils
@@ -44,8 +42,6 @@ def get_prediction(path, model, x=240, y=240):
     img = prepare_image(path, x, y)
     return model.predict(img, verbose=0)
 
-
-def run(path, model_path):
-    model = load_model(model_path)
+def run(path, model):
     predictions = get_prediction(path, model)
     return np.where(predictions[0] > 0.5, 1, 0)[0]

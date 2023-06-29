@@ -6,33 +6,29 @@
     Version:
         26-06-2023
 '''
-import os
 import pandas as pd
+from tensorflow.keras.models import load_model
 import wrapper
 from sklearn.model_selection import train_test_split
+from helpers import get_next_image_path
 
 # Constants
 XAI_CHOICES = ['LIME', 'SHAP', 'Grad-CAM']
 DATASET_PATH = '../dataset/MICCAI_BraTS_2018_Data_Training'
 MODEL_PATH = '../models/cnn-parameters-improvement-23-0.91.model'
 
-print('Welcome!')
-
-# Load the dataset
-print('Loading dataset...')
-#print(os.listdir(f'{DATASET_PATH}/HGG/Brats18_2013_2_1'))
+print('Welcome!\nLoading dataset and model...')
 brats_2018 = pd.read_csv(f'{DATASET_PATH}/survival_data.csv', sep=",")
+model = load_model(MODEL_PATH)
 
+print('Generating predictions...')
+#image_path = get_next_image_path(DATASET_PATH)
+#print(image_path)
 
-#url: https://github.com/MohamedAliHabib/Brain-Tumor-Detection/blob/master/Brain%20Tumor%20Detection.ipynb
-
-from tensorflow.keras.models import load_model
-
-img = wrapper.run(
-#pred = wrapper.get_prediction(
-        f'{DATASET_PATH}/HGG/Brats18_2013_10_1/jpg/output-slice070.jpg',    # test a single image 
-        MODEL_PATH 
-        #load_model(MODEL_PATH), 240, 240
+pred = wrapper.run(
+        #f'{DATASET_PATH}/HGG/Brats18_2013_10_1/jpg/output-slice070.jpg',
+        path=get_next_image_path(DATASET_PATH),
+        model=model,
     )
 
 #print(pred)
@@ -48,12 +44,6 @@ plt.figure()
 plt.imshow(img_1)
 plt.show()
 '''
-
-# Train the model
-print('Training model...')
-
-# Make a prediction
-print('Creating predictions...')
 
 # Interpret the prediction
 while True:
