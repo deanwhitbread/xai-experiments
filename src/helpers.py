@@ -9,7 +9,6 @@
 import os
 import random as rand
 
-#rand.seed(11)
 rand.seed(3)
 
 def __get_next_directory_name(path):
