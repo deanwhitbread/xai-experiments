@@ -30,7 +30,7 @@ def crop(image):
     return image[extTop[1] : extBot[1], extLeft[0] : extRight[0]]
 
 
-def prepare_image(path, x, y):
+def prepare_image(path, x=240, y=240):
     img = cv2.imread(path)
     img = crop(img)
     img = cv2.resize(img, dsize=(x, y), interpolation=cv2.INTER_CUBIC)
@@ -44,4 +44,5 @@ def get_prediction(path, model, x=240, y=240):
 
 def run(path, model):
     predictions = get_prediction(path, model)
-    return np.where(predictions[0] > 0.5, 1, 0)[0]
+    #return np.where(predictions[0] > 0.5, 1, 0)[0]
+    return np.where(predictions[0] > 0.5, 'Tumour', 'Benign')[0]

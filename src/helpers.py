@@ -9,7 +9,8 @@
 import os
 import random as rand
 
-rand.seed(11)
+#rand.seed(11)
+rand.seed(3)
 
 def __get_next_directory_name(path):
     ''' Return the name of a randomly selected directory. 
