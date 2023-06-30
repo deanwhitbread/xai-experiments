@@ -4,13 +4,12 @@
     Author:
         Dean Whitbread
     Version:
-        26-06-2023
+        29-06-2023
 '''
 import pandas as pd
 from tensorflow.keras.models import load_model
-import wrapper
-from sklearn.model_selection import train_test_split
 from helpers import get_next_image_path, get_shortcut_key_str, get_shortcut_key
+from xai.grad_cam_xai import GradCam
 
 # Constants
 XAI_CHOICES = [
@@ -25,45 +24,24 @@ print('Welcome!\nLoading dataset and model...')
 brats_2018 = pd.read_csv(f'{DATASET_PATH}/survival_data.csv', sep=",")
 model = load_model(MODEL_PATH)
 
-print('Generating predictions...')
-#image_path = get_next_image_path(DATASET_PATH)
-#print(image_path)
+print('Choosing image...')
+image_path = get_next_image_path(DATASET_PATH)
 
-pred = wrapper.run(
-        #f'{DATASET_PATH}/HGG/Brats18_2013_10_1/jpg/output-slice070.jpg',
-        path=get_next_image_path(DATASET_PATH),
-        model=model,
-    )
-
-#print(pred)
-
-'''
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import cv2
-
-img_1 = wrapper.crop(cv2.imread(f'{DATASET_PATH}/HGG/Brats18_2013_10_1/jpg/output-slice070.jpg'))
-
-plt.figure()
-plt.imshow(img_1)
-plt.show()
-'''
-
-# Interpret the prediction
-while True:
-    print('\nHow do you want to interpret the predictions?')
-    
-    ''' Prepare available options '''
+def get_choices():
+    '''Return the available xai interpretor choices. '''
     avail_opts = ""
     for choice in XAI_CHOICES:
-        if choice != XAI_CHOICES[len(XAI_CHOICES)-1]:
-            avail_opts += choice.lower().strip() + ', '
-        else:
-            avail_opts += choice.lower().strip()
-    quit_str = get_shortcut_key_str('quit', 'q')
-    opt = input(f'Choices: {avail_opts}, {quit_str}: ').lower().strip()
+        avail_opts += choice.lower().strip() + ', '
+            
+    avail_opts += get_shortcut_key_str('quit', 'q')
 
-    ''' Show XAI interpretation or quit '''
+    return avail_opts
+
+while True:
+    print('\nHow do you want to interpret the prediction?')
+    
+    opt = input(f'Choices: {get_choices()}:').lower().strip()
+
     if opt == 'quit' or opt == 'q':
         print('Goodbye')
         break;
@@ -75,6 +53,9 @@ while True:
         pass
     elif opt == XAI_CHOICES[2].lower() or opt == get_shortcut_key(XAI_CHOICES[2]):
         # Grad-CAM
-        pass
+        xai = GradCam(image_path, model)
     else:
         print('Invalid choice. Try again.')
+        continue;
+
+    xai.show()
