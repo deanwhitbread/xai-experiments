@@ -10,6 +10,7 @@ import pandas as pd
 from tensorflow.keras.models import load_model
 from helpers import get_next_image_path, get_shortcut_key_str, get_shortcut_key, get_choices
 from xai.grad_cam_xai import GradCam
+from xai.lime_xai import Lime
 
 # Constants
 XAI_CHOICES = [
