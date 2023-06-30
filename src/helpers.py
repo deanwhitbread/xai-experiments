@@ -46,3 +46,31 @@ def get_next_image_path(path):
 
     return f'{path}/{__get_image_name(path)}'
 
+def get_shortcut_key_str(word, key):
+    '''Return a string highlighting the shortcut key.
+
+    Arguments:
+        word The word being highlighted.
+        key The shortcut key in the word. 
+    '''
+    output = ""
+    for letter in word:
+        if letter.lower() == key:
+            output = '(' + letter +')'
+        else:
+            output += letter
+    
+    return output
+
+def get_shortcut_key(word):
+    '''Return the shortcut key for a word.
+    
+    Arguments:
+        word The word to extract the shortcut key from.
+    '''
+    for letter in word:
+        if letter == '(':
+            index = word.find(letter)
+            return word[index + 1].lower()
+
+    return ''
