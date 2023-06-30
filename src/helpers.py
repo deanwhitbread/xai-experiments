@@ -74,3 +74,20 @@ def get_shortcut_key(word):
             return word[index + 1].lower()
 
     return ''
+
+def get_choices(choices_array):
+    '''Return the string representation of the available
+       XAI interpretor options.
+
+    Arguments:
+        choices_array The array that contains all the 
+                      available choices.
+    '''
+    avail_opts = ""
+    for choice in choices_array:
+        avail_opts += choice.lower().strip() + ', '
+
+    avail_opts += get_shortcut_key_str('quit', 'q')
+
+    return avail_opts
+
