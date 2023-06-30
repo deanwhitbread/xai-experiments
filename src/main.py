@@ -37,8 +37,7 @@ while True:
         print('Goodbye')
         break;
     elif opt == XAI_CHOICES[0].lower() or opt == get_shortcut_key(XAI_CHOICES[0]):
-        # LIME
-        continue;
+        xai = Lime(image_path, model)
     elif opt == XAI_CHOICES[1].lower() or opt == get_shortcut_key(XAI_CHOICES[1]):
         # SHAP
         continue;
