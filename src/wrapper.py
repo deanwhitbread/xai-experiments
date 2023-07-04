@@ -45,4 +45,4 @@ def get_prediction(path, model, x=240, y=240):
 def run(path, model):
     predictions = get_prediction(path, model)
     #return np.where(predictions[0] > 0.5, 1, 0)[0]
-    return np.where(predictions[0] > 0.5, 'Tumour', 'Benign')[0]
+    return np.where(predictions[0] > 0.5, 'Tumour', 'Non-Tumour')[0]
