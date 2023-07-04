@@ -142,3 +142,20 @@ def get_dataset_images(path, n=1000):
 
     return images
 
+def get_image_paths(path):
+    '''Return a list of paths of all images in the dataset. 
+      
+    Arguments: 
+        path: The path to the datatset parent directory.
+
+    '''
+    paths = []
+    for i in range(0, len(os.listdir(path))):
+        if os.listdir(path)[i] == 'convert_to_jpg.sh':
+            break;
+        else:
+            paths += __get_images(path, os.listdir(path)[i])
+    
+    rand.shuffle(paths)
+
+    return paths
