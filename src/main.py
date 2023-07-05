@@ -6,6 +6,8 @@
     Version:
         04-07-2023
 '''
+print('Welcome!\nLoading imports...')
+
 import pandas as pd
 from tensorflow.keras.models import load_model
 from helpers import get_shortcut_key_str, get_shortcut_key, get_choices, get_dataset_images, get_image_paths
@@ -25,14 +27,14 @@ XAI_CHOICES = [
 DATASET_PATH = '../dataset/MICCAI_BraTS_2018_Data_Training'
 MODEL_PATH = '../models/cnn-parameters-improvement-23-0.91.model'
 
-print('Welcome!\nLoading model...')
+print('Loading model...')
 model = load_model(MODEL_PATH)
 
 print('Choosing first image...')
 paths = get_image_paths(DATASET_PATH)
 index = 0
 
-print('Generating a list of dataset images...')
+print('Generating dataset images list...')
 images = get_dataset_images(DATASET_PATH)
 
 while True:
