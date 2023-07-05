@@ -11,11 +11,10 @@ print('Welcome!\nLoading imports...')
 import pandas as pd
 from tensorflow.keras.models import load_model
 from helpers import get_shortcut_key_str, get_shortcut_key, get_choices, get_dataset_images, get_image_paths
-from xai.grad_cam_xai import GradCam
-from xai.lime_xai import Lime
-from xai.shap_xai import Shap
 from wrapper import run as predict
-from os import listdir
+from xai.grad_cam_xai_factory import GradCamXaiFactory
+from xai.lime_xai_factory import LimeXaiFactory
+from xai.shap_xai_factory import ShapXaiFactory
 
 # Constants
 XAI_CHOICES = [
@@ -49,11 +48,11 @@ while True:
         print('Goodbye')
         break;
     elif opt == XAI_CHOICES[0].lower() or opt == get_shortcut_key(XAI_CHOICES[0]):
-        xai = Lime(image_path, model)
+        xai = LimeXaiFactory(image_path, model)
     elif opt == XAI_CHOICES[1].lower() or opt == get_shortcut_key(XAI_CHOICES[1]):
-        xai= Shap(image_path, model, images)
+        xai = ShapXaiFactory(image_path, model, images)
     elif opt == XAI_CHOICES[2].lower() or opt == get_shortcut_key(XAI_CHOICES[2]):
-        xai = GradCam(image_path, model)
+        xai = GradCamXaiFactory(image_path, model)
     elif opt == XAI_CHOICES[3].lower() or opt == get_shortcut_key(XAI_CHOICES[3]):
         index += 1
         continue;
@@ -61,4 +60,4 @@ while True:
         print('Invalid choice. Try again.')
         continue;
 
-    xai.show()
+    xai.get_xai_tool().show()
