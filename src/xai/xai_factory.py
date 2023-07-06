@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 '''
-    XaiFactory abstract class is a factory for constructing
-    explainable AI (XAI) tools to interpret predictions. 
+    XaiFactory is an abstract class that is used as a factory 
+    for constructing explainable AI (XAI) tools.
 
-Author:
-    Dean Whitbread
-Version: 
-    05-07-2023
+    XAI tools are used to explain predictions.
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 from abc import ABC, abstractmethod
 import misc.wrapper as wrapper
 import cv2
@@ -17,10 +16,9 @@ class XaiFactory:
     def __init__(self, impath, model):
         '''Construct the XaiFactory abstract class.
 
-        Arguments:
-            impath: The directory path to the target image. 
-            model: The classifcation model used to
-                   classify the target image.
+        Parameters:
+        impath: The directory path to the target image. 
+        model: The classifcation model used to classify the target image.
         '''
         self.impath = impath
         self.model = model
@@ -28,14 +26,12 @@ class XaiFactory:
 
     def __get_image_from_path(self, path, size=240):
         '''Return an image from the directory path. 
-           The returned image will be ready to be 
-           used with the model. 
+           
+        The returned image will be ready for use with the model. 
 
-        Arguments:
-            path: The directory path where the image
-                  is stored. 
-            size: The size of the image for the model.
-                  Default is 240 pixels. 
+        Parameters:
+        path: The directory path where the target image is stored. 
+        size: The size of the image for the model. Default is 240 pixels. 
         '''
         image = wrapper.crop(
                     cv2.imread(path)
@@ -48,15 +44,11 @@ class XaiFactory:
         return image
     
     def get_image_path(self):
-        '''Return the directory path of the target
-           image.
-        '''
+        '''Return the directory path of the target image.'''
         return self.impath
 
     def get_model(self):
-        '''Return the model used to classify the 
-           target image.
-        '''
+        '''Return the model used to classify the target image.'''
         return self.model
     
     def get_target_image(self):
@@ -65,8 +57,5 @@ class XaiFactory:
 
     @abstractmethod
     def get_xai_tool(self):
-        '''Return the explainable AI (XAI) tool
-           to interpret the prediction of the 
-           target image. 
-        '''
+        '''Return the explainable AI (XAI) tool used by the class.'''
         pass

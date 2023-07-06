@@ -1,12 +1,12 @@
 '''
-    The XaiTool interface represents an explainable
-    AI (XAI) tool that interprets predictions. 
+    XaiTool represents an explainable AI (XAI) 
+    tool that interprets predictions. 
 
-Author:
-    Dean Whitbread
-Version:
-    05-07-2023
+    Interface contains two abstract classes.
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 from abc import ABC, abstractmethod
 
 class XaiTool(ABC):
@@ -15,10 +15,9 @@ class XaiTool(ABC):
     def get_explaination(self, target_im, model) -> object:
         '''Return the explaination object of the xai tool. 
 
-        Arguments:
-            target_im: The target image being classified. 
-            model: The classifcation model used to 
-                   classify the target image. 
+        Parameters:
+        target_im: The target image being classified. 
+        model: The classifcation model used to classify the target image. 
         '''
         pass
 

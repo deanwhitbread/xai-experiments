@@ -1,11 +1,13 @@
 '''
-    The main file that executes the experiments. 
-    
-    Author:
-        Dean Whitbread
-    Version:
-        04-07-2023
+    The main script that executes the experiments.
+
+    This script loads the pretrained model, generates
+    a list of dataset images to use in the experiement,
+    and handles the choices choosen by the user. 
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 print('Welcome!\nLoading imports...')
 
 import pandas as pd

@@ -2,28 +2,23 @@
     The LimeXaiTool concrete class represents
     as explainable AI (XAI) tool used to 
     interpret predictions using LIME. 
-
-Author:
-    Dean Whitbread
-Version: 
-    05-07-2023
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 from xai.tools.xai_tool import XaiTool
 from lime.lime_image import LimeImageExplainer
-#import cv2
-#import wrapper
 import matplotlib.pyplot as plt
 import numpy as np
 
 class LimeXaiTool(XaiTool):
 
     def __init__(self, target_im, model):
-        '''Constructor for Lime class.
+        '''Constructor for LimeXaiTool class.
 
-        Arguments:
-            target_im: The target image being classified.
-            model: The classifcation model used to
-                   classify the target image.
+        Parameters:
+        target_im: The target image being classified.
+        model: The classifcation model used to classify the target image.
         '''
         self.lime = LimeImageExplainer(random_state=3)
         self.target_im = target_im
@@ -32,21 +27,14 @@ class LimeXaiTool(XaiTool):
     def get_explaination(self, target_im, model) -> object:
         '''Return the explaination object of the xai tool.
 
-        Arguments:
-            target_im: The target image being classified.
-            model: The classifcation model used to
-                   classify the target image.
+        Parameters:
+        target_im: The target image being classified.
+        model: The classifcation model used to classify the target image.
         '''
         return self.lime.explain_instance(target_im, model)
 
     def show(self):
-        '''Display the XAI tool's explaination
-        
-        Arguments:
-            expl: The explaination object of the 
-                  xai tool. 
-            target_im: The target image being classified.
-        '''
+        '''Display the XAI tool's explaination.'''
         #Select the same class as the top prediction.
         ind =  self.expl.top_labels[0]
         

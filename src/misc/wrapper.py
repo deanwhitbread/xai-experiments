@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import imutils
 
+__author__ = 'David Kelly'
 
 def crop(image):
     # Convert the image to grayscale, and blur it slightly

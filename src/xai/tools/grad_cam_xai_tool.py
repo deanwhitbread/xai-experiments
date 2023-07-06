@@ -2,12 +2,10 @@
     The GradCamXaiTool concrete class represents
     as explainable AI (XAI) tool used to 
     interpret predictions using Grad-CAM. 
-
-Author:
-    Dean Whitbread
-Version: 
-    05-07-2023
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 from xai.tools.xai_tool import XaiTool
 import numpy as np
 import tensorflow as tf
@@ -18,13 +16,11 @@ import matplotlib.pyplot as plt
 
 class GradCamXaiTool(XaiTool):
     def __init__(self, impath, target_im, model):
-        '''Constructor for GradCAMXai object. 
+        '''Constructor for GradCamXaiTool object. 
 
-        Arguments:
-            impath: The directory path to the target 
-                    image. 
-            model: The classifcation model used to
-                   classify the target image.
+        Parameters:
+        impath: The directory path to the target image. 
+        model: The classifcation model used to classify the target image.
         '''
         self.target_im = target_im
         self.target_layer = self.get_target_layer(model)
@@ -34,9 +30,8 @@ class GradCamXaiTool(XaiTool):
     def get_target_layer(self, model):
         '''Return the final convolutional layer in the model.
 
-        Arguments:
-            model: The classifcation model used to 
-                   classify the target image. 
+        Parameters:
+        model: The classifcation model used to classify the target image. 
         '''
         for layer in reversed(model.layers):
             # check layer has a 4D output
@@ -46,13 +41,11 @@ class GradCamXaiTool(XaiTool):
         raise ValueError("Could not find 4D layer. Cannot apply Grad-CAM.")
 
     def get_heatmap(self, impath, model):
-        '''Return the heatmap for the target image. 
+        '''Return the heatmap image for the target image. 
         
-        Arguments:
-            impath: The directory path to the target 
-                    image. 
-            model: The classifcation model used to 
-                   classify the target image.
+        Parameters:
+        impath: The directory path to the target image. 
+        model: The classifcation model used to classify the target image.
         '''
         im_nparray = wrapper.prepare_image(impath)
 
@@ -101,10 +94,9 @@ class GradCamXaiTool(XaiTool):
     def get_explaination(self, target_im, model) -> object:
         '''Return the explaination object of the xai tool.
 
-        Arguments:
-            target_im: The target image being classified.
-            model: The classifcation model used to
-                   classify the target image.
+        Parameters:
+        target_im: The target image being classified.
+        model: The classifcation model used to classify the target image.
         '''
         colormap = cv2.COLORMAP_VIRIDIS
         alpha = 0.5
