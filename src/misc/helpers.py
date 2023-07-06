@@ -1,58 +1,62 @@
 '''
-    helpers.py file contains various helper methods.
+    helpers.py file contains various methods that
+    assist with the creation of the experiments.
 
-    Author:
-        Dean Whitbread
-    Version:
-        04-07-2023
+    All methods are publc and the file uses a seeder
+    to generate reproducable results.
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '04-07-2023'
+
 import os
 import random as rand
 import misc.wrapper as wrapper
 
 rand.seed(3)
 
-def __get_next_directory_name(path):
-    ''' Return the name of a randomly selected directory. 
-    
-    Arguments:
-        path: The path of the current directory where child
-               directory folders are located. 
-    '''
-    dir_list = next(os.walk(path))[1]
-    index = rand.randint(0, len(dir_list)-1)
-    return dir_list[index]
-
-def __get_image_name(path):
-    ''' Return the name of a randomly selected image.
-
-    Arguments:
-        path: The path of the current directory where the 
-               image file are located. 
-    '''
-    image_list = os.listdir(path)
-    return image_list[rand.randint(0, len(image_list)-1)]
-
-def get_next_image_path(path):
-    ''' Return the path where the randomly selected image
-        is located.
-
-    Arguments:
-        path: The initial path to start the selection.
-        
-    '''
-    while len(next(os.walk(path))[1]):
-        next_dir = __get_next_directory_name(path)
-        path = f'{path}/{next_dir}'
-
-    return f'{path}/{__get_image_name(path)}'
+#'''
+#def __get_next_directory_name(path):
+#    ''' Return the name of a randomly selected directory. 
+#    
+#    Arguments:
+#        path: The path of the current directory where child
+#               directory folders are located. 
+#    '''
+#    dir_list = next(os.walk(path))[1]
+#    index = rand.randint(0, len(dir_list)-1)
+#    return dir_list[index]
+#
+#def __get_image_name(path):
+#    ''' Return the name of a randomly selected image.
+#
+#    Arguments:
+#        path: The path of the current directory where the 
+#               image file are located. 
+#    '''
+#    image_list = os.listdir(path)
+#    return image_list[rand.randint(0, len(image_list)-1)]
+#
+#def get_next_image_path(path):
+#    ''' Return the path where the randomly selected image
+#        is located.
+#
+#    Arguments:
+#        path: The initial path to start the selection.
+#        
+#    '''
+#    while len(next(os.walk(path))[1]):
+#        next_dir = __get_next_directory_name(path)
+#        path = f'{path}/{next_dir}'
+#
+#    return f'{path}/{__get_image_name(path)}'
+#
 
 def get_shortcut_key_str(word, key):
     '''Return a string highlighting the shortcut key.
 
-    Arguments:
-        word: The word being highlighted.
-        key: The shortcut key in the word. 
+    Parameters:
+    word: The word to highlight.
+    key: The shortcut key letter in the word. 
     '''
     output = ""
     for letter in word:
@@ -64,28 +68,26 @@ def get_shortcut_key_str(word, key):
     return output
 
 def get_shortcut_key(word):
-    '''Return the shortcut key for a word.
+    '''Return the shortcut key from a word.
     
-    Arguments:
-        word: The word to extract the shortcut key from.
+    Parameters:
+    word: The word to extract the shortcut key from.
     '''
     for letter in word:
         if letter == '(':
             index = word.find(letter)
             return word[index + 1].lower()
 
-    return ''
+    return word
 
-def get_choices(choices_array):
-    '''Return the string representation of the available
-       XAI interpretor options.
+def get_choices(choices):
+    '''Return the available options from the list of choices.
 
-    Arguments:
-        choices_array: The array that contains all the 
-                      available choices.
+    Parameters:
+    choices: The array that contains all the available choices.
     '''
     avail_opts = ""
-    for choice in choices_array:
+    for choice in choices:
         avail_opts += choice.lower().strip() + ', '
 
     avail_opts += get_shortcut_key_str('quit', 'q')
@@ -94,10 +96,14 @@ def get_choices(choices_array):
 
 
 def __get_image_number(image_name):
-    '''Return the last digits of the image name. 
+    '''Return the image number. 
 
-    Arguments:
-        image_name: The name of the image to extract the digits from.
+    The numbers in the image name are in the
+    format [name]-###.jpg, where # represents a digit
+    between 0-9.
+
+    Parameters:
+    image_name: The path of the image.
     '''
     if image_name[-7] != 0:
         return int(image_name[-7] + image_name[-6] + image_name[-5])
@@ -107,10 +113,9 @@ def __get_image_number(image_name):
 def __get_images(path, folder):
     '''Return a list of paths to all the images in the dataset. 
 
-    Arguments:
-        path: The path to the dataset parent directory.
-        folder: The child folder stored in the first level
-                of the parent folder. 
+    Parameters:
+    path: The path to the datasets' parent directory.
+    folder: The child folder stored in the first level of the parent folder. 
     '''
     cd = f'{path}/{folder}'
     
@@ -126,11 +131,11 @@ def __get_images(path, folder):
     return new_list
 
 def get_dataset_images(path, n=1000):
-    '''Return a numpy matrix of n images in the dataset.
+    '''Return a numpy matrix of n-images in the dataset.
 
-    Arguments:
-        path: The path to the dataset parent directory.
-        n: The number of images to extract from the dataset. Default is 1000.
+    Parameters:
+    path: The path to the datasets' parent directory.
+    n: The number of images to extract from the dataset. Default is 1000.
     '''
     dataset_images = (__get_images(path, 'HGG') + __get_images(path, 'LGG'))
     rand.shuffle(dataset_images)
@@ -145,9 +150,8 @@ def get_dataset_images(path, n=1000):
 def get_image_paths(path):
     '''Return a list of paths of all images in the dataset. 
       
-    Arguments: 
-        path: The path to the datatset parent directory.
-
+    Parameters: 
+    path: The path to the datatsets' parent directory.
     '''
     paths = []
     for i in range(0, len(os.listdir(path))):

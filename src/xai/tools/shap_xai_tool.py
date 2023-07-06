@@ -2,12 +2,10 @@
     The ShapXaiTool concrete class represents
     as explainable AI (XAI) tool used to
     interpret predictions using SHAP.
-
-Author:
-    Dean Whitbread
-Version:
-    05-07-2023
 '''
+__author__ = 'Dean Whitbread'
+__version__ = '05-07-2023'
+
 # ignore warning messages when import shap
 from warnings import filterwarnings
 filterwarnings("ignore", message=".*The 'nopython' keyword.*")
@@ -17,13 +15,12 @@ import shap
 
 class ShapXaiTool(XaiTool):
     def __init__(self, target_im, model, images):
-        '''Construct the Shap object.
+        '''Construct the ShapXaiTool object.
             
-        Arguments:
-            target_im: The target image being classified.
-            model: The classifcation model used to
-                   classify the target image.
-            images: A numpy matrix of all the images in the dataset. 
+        Parameters:
+        target_im: The target image being classified.
+        model: The classifcation model used to classify the target image.
+        images: A numpy matrix of all the images in the dataset. 
         '''
         self.images = images
         self.exp = self.get_explaination(target_im, model)
@@ -31,10 +28,9 @@ class ShapXaiTool(XaiTool):
     def get_explaination(self, target_im, model) -> object:
         '''Return the explaination object of the xai tool. 
 
-        Arguments:
-            target_im: The target image being classified. 
-            model: The classifcation model used to 
-                   classify the target image. 
+        Parameters:
+        target_im: The target image being classified. 
+        model: The classifcation model used to classify the target image. 
         '''
         masker = shap.maskers.Image('blur(240,240)', target_im.shape)
         explainer = shap.Explainer(model, masker)
