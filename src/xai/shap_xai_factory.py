@@ -9,7 +9,7 @@ Version:
 '''
 from xai.xai_factory import XaiFactory
 from xai.tools.shap_xai_tool import ShapXaiTool
-import wrapper
+import misc.wrapper as wrapper
 
 class ShapXaiFactory(XaiFactory):
 

@@ -8,7 +8,7 @@
 '''
 import os
 import random as rand
-import wrapper
+import misc.wrapper as wrapper
 
 rand.seed(3)
 

@@ -13,7 +13,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
 import cv2
-import wrapper
+import misc.wrapper as wrapper
 import matplotlib.pyplot as plt
 
 class GradCamXaiTool(XaiTool):
