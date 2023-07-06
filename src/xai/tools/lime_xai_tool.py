@@ -10,6 +10,7 @@ from xai.tools.xai_tool import XaiTool
 from lime.lime_image import LimeImageExplainer
 import matplotlib.pyplot as plt
 import numpy as np
+from skimage.segmentation import mark_boundaries
 
 class LimeXaiTool(XaiTool):
 
@@ -35,17 +36,11 @@ class LimeXaiTool(XaiTool):
 
     def show(self):
         '''Display the XAI tool's explaination.'''
-        #Select the same class as the top prediction.
-        ind =  self.expl.top_labels[0]
-        
-        #Map each explanation weight to the corresponding superpixel
-        dict_heatmap = dict(self.expl.local_exp[ind])
-        heatmap = np.vectorize(dict_heatmap.get)(self.expl.segments)
-       
-        # display target image and heatmap
-        fig, ax = plt.subplots(1,2)
+        label =  self.expl.top_labels[0] 
+        image, mask = self.expl.get_image_and_mask(label)
 
+        fig, ax = plt.subplots(1,2)
         ax[0].imshow(self.target_im)
-        ax[1].imshow(heatmap, cmap = 'RdGy', vmin  = -heatmap.max(), vmax = heatmap.max())
+        ax[1].imshow(mark_boundaries(image, mask, color=(255,0,0)))
 
         plt.show()
