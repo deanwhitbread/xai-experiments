@@ -10,8 +10,8 @@ print('Welcome!\nLoading imports...')
 
 import pandas as pd
 from tensorflow.keras.models import load_model
-from helpers import get_shortcut_key_str, get_shortcut_key, get_choices, get_dataset_images, get_image_paths
-from wrapper import run as predict
+from misc.helpers import get_shortcut_key_str, get_shortcut_key, get_choices, get_dataset_images, get_image_paths
+from misc.wrapper import run as predict
 from xai.grad_cam_xai_factory import GradCamXaiFactory
 from xai.lime_xai_factory import LimeXaiFactory
 from xai.shap_xai_factory import ShapXaiFactory

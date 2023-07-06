@@ -9,7 +9,7 @@ Version:
     05-07-2023
 '''
 from abc import ABC, abstractmethod
-import wrapper
+import misc.wrapper as wrapper
 import cv2
 
 class XaiFactory:
