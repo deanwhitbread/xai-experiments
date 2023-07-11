@@ -6,7 +6,7 @@
     to generate reproducable results.
 '''
 __author__ = 'Dean Whitbread'
-__version__ = '04-07-2023'
+__version__ = '11-07-2023'
 
 import os
 import random as rand
@@ -30,7 +30,7 @@ def get_shortcut_key_str(word, key):
     
     return output
 
-def get_shortcut_key(word):
+def __get_shortcut_key(word):
     '''Return the shortcut key from a word.
     
     Parameters:
@@ -43,17 +43,18 @@ def get_shortcut_key(word):
 
     return word
 
-def get_choices(choices):
-    '''Return the available options from the list of choices.
+def list_to_str(choices):
+    '''Return all the elements in a list as a comma-serparated string.
 
     Parameters:
-    choices: The array that contains all the available choices.
+    choices: A list containing elements.
     '''
     avail_opts = ""
-    for choice in choices:
-        avail_opts += choice.lower().strip() + ', '
-
-    avail_opts += get_shortcut_key_str('quit', 'q')
+    for i in range(0, len(choices)):
+        if i == len(choices)-1:
+            avail_opts += choices[i].lower().strip()
+        else:
+            avail_opts += choices[i].lower().strip() + ', '
 
     return avail_opts
 
@@ -126,3 +127,24 @@ def get_image_paths(path):
     rand.shuffle(paths)
 
     return paths
+
+def __strip_choice_str(choice_str):
+    '''Strip any open or closed brackets from the choice string. 
+
+    Parameters: 
+    choice_str: The string of the choice to be stripped. 
+    '''
+    return choice_str.lower().replace('(', '').replace(')', '')
+
+def is_input_str_this_choice(input_str, choice_str): 
+    '''Check if the input string matches the choice_str. 
+
+    True if the input string and choice string match, False otherwise. 
+
+    Parameters:
+        input_str: The input string.
+        choice_str: The choice string. 
+    '''
+    input_str = input_str.lower().strip()
+    return (input_str == __strip_choice_str(choice_str) 
+            or input_str == __get_shortcut_key(choice_str))
