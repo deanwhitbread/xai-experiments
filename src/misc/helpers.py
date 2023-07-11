@@ -12,7 +12,7 @@ import os
 import random as rand
 import misc.wrapper as wrapper
 
-rand.seed(3)
+rand.seed(12)
 
 def get_shortcut_key_str(word, key):
     '''Return a string highlighting the shortcut key.
