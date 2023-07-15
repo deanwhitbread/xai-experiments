@@ -40,13 +40,22 @@ paths_index = 0
 print('Generating dataset images list...')
 images = get_dataset_images(DATASET_PATH)
 
+# Testing tool
+test_ind = 0
+test_cmd = (['g', 'n']*5) + ['q']
+
 while True:
     image_path = paths[paths_index]
 
     print(f'\nModel Prediction: {predict(image_path, model)}')
     print('How do you want to interpret the prediction?')
     
-    input_str = input(f'Choices: {list_to_str(CHOICES)}: ')
+    if test_ind != len(test_cmd):
+        input_str = test_cmd[test_ind]
+        test_ind += 1
+    else:
+        input_str = 'q'
+    #input_str = input(f'Choices: {list_to_str(CHOICES)}: ')
 
     if is_input_str_this_choice(input_str, CHOICES[-1]):
         print('Goodbye')

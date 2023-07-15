@@ -15,7 +15,7 @@ import misc.wrapper as wrapper
 import matplotlib.pyplot as plt
 
 class GradCamXaiTool(XaiTool):
-    def __init__(self, impath, target_im, model):
+    def __init__(self, impath, target_im, model, highlight_im):
         '''Constructor for GradCamXaiTool object. 
 
         Parameters:
@@ -26,6 +26,7 @@ class GradCamXaiTool(XaiTool):
         self.target_layer = self.get_target_layer(model)
         self.heatmap = self.get_heatmap(impath, model)
         self.expl = self.get_explaination(self.target_im, model)[-1]
+        self.highlight_im = highlight_im
 
     def get_target_layer(self, model):
         '''Return the final convolutional layer in the model.
@@ -108,9 +109,10 @@ class GradCamXaiTool(XaiTool):
 
     def show(self):
         '''Display the XAI tool's explaination.'''
-        fig, ax = plt.subplots(1, 2)
+        fig, ax = plt.subplots(1, 3)
         
         ax[0].imshow(self.target_im)
         ax[1].imshow(self.expl)
+        ax[2].imshow(self.highlight_im)
 
         plt.show()
