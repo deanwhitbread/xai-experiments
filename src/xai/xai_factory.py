@@ -10,7 +10,7 @@ __version__ = '05-07-2023'
 from abc import ABC, abstractmethod
 import misc.wrapper as wrapper
 import cv2
-from analyser import tumor_detector as td
+from analyser.detector.tumor_detector import TumorDetector
 
 class XaiFactory:
 
@@ -24,7 +24,8 @@ class XaiFactory:
         self.impath = impath
         self.model = model
         self.target_im = self.__get_image_from_path(self.impath)
-        self.highlight_im = td.detect_and_highlight_tumor(self.__get_image_from_path(self.impath))
+        self.td = TumorDetector(self.__get_image_from_path(self.impath))
+        self.highlight_im = self.td.highlight_tumor_on_image()
 
     def __get_image_from_path(self, path, size=240):
         '''Return an image from the directory path. 
