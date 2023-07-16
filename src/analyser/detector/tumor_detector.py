@@ -53,7 +53,7 @@ class TumorDetector:
         detected region.
 
         Coords in the list are in the order: 
-            [topLeft, topRight, btmLeft, btmRight]
+            [left, right, top, bottom]
         '''
         (x, y, r) = self.find_optimal_tumor_coord()[0]
         top = y+r
@@ -61,12 +61,7 @@ class TumorDetector:
         left = x-r
         right = x+r
 
-        coords = [
-                    top+left,
-                    top+right,
-                    bottom+left,
-                    bottom+right,
-                ]
+        coords = [left, right, top, bottom]
 
         for i in range(0, len(coords)):
             coord = coords[i]

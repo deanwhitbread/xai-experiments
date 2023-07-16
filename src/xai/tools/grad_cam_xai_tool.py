@@ -13,6 +13,7 @@ from tensorflow.keras import Model
 import cv2
 import misc.wrapper as wrapper
 import matplotlib.pyplot as plt
+from analyser.image_analyser import ImageAnalyser
 
 class GradCamXaiTool(XaiTool):
     def __init__(self, impath, target_im, model, highlight_im):
@@ -114,5 +115,8 @@ class GradCamXaiTool(XaiTool):
         ax[0].imshow(self.target_im)
         ax[1].imshow(self.expl)
         ax[2].imshow(self.highlight_im)
+        
+        analyser = ImageAnalyser(self.target_im, self.expl, 'gradcam')
+        print(analyser.results())
 
         plt.show()

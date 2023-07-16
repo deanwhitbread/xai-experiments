@@ -5,13 +5,7 @@
 __author__ = 'Dean Whitbread'
 __version__ = '16-07-2023'
 
-from analyse.detector.tumor_detector import TumorDetector
-
-xai_method = {
-            'lime': 1,
-            'shap': 2,
-            'grad-cam':3,
-        }
+from analyser.detector.tumor_detector import TumorDetector
 
 class ImageAnalyser:
     def __init__(self, original_image, explained_image, xai_method):
@@ -46,30 +40,110 @@ class ImageAnalyser:
     def results(self):
         '''Display the precision score and recall score.'''
         header = '*' * 10
-        output = f'{header}\nResults\n{header}'
-        output += f'Precision Score: {self.precision_score}\n'
-        output += f'Recall Score: {self.recall_score}\n'
+        output = f'\n{header}\nResults\n{header}\n'
+        output += f'Precision Score: {self.precision_score()}\n'
+        output += f'Recall Score: {self.recall_score()}\n'
         output += header
 
         return output
 
     def __analyse_image(self):
         score_map = {}
-        score_map['tp'] = self.__find_true_positive()
-        score_map['tn'] = self.__find_true_negative()
-        score_map['fp'] = self.__find_false_positive()
-        score_map['fn'] = self.__find_false_negative()
+        pn_map = self.__create_positive_negative_map()
+        
+        score_map['tp'] = self.__find_true_positive(pn_map)
+        score_map['tn'] = self.__find_true_negative(pn_map)
+        score_map['fp'] = self.__find_false_positive(pn_map)
+        score_map['fn'] = self.__find_false_negative(pn_map)
 
         return score_map
 
-    def __find_true_positive(self):
-        pass
+    def __find_true_positive(self, pn_map):
+        if self.td.image_has_tumor():
+            tumor_pn_map = self.__get_tumor_positive_negative_map()
 
-    def __find_true_negative(self):
-        pass
+            return tumor_pn_map['positive']
+        else:
+            return pn_map['positive']
 
-    def __find_false_positive(self):
-        pass
+    def __find_true_negative(self, pn_map):
+        if self.td.image_has_tumor():
+            tumor_pn_map = self.__get_tumor_positive_negative_map()
 
-    def __find_false_negative(self):
-        pass
+            return tumor_pn_map['negative']
+        else:
+            return pn_map['negative']
+
+    def __find_false_positive(self, pn_map):
+        if self.td.image_has_tumor():
+            tumor_pn_map = self.__get_tumor_positive_negative_map()
+
+            return pn_map['positive'] - tumor_pn_map['positive']
+        else:
+            return pn_map['positive']
+
+    def __find_false_negative(self, pn_map):
+        if self.td.image_has_tumor():
+            tumor_pn_map = self.__get_tumor_positive_negative_map()
+
+            return pn_map['negative'] - tumor_pn_map['negative']
+        else:
+            return pn_map['negative']
+
+    def __create_positive_negative_map(self, x_start=0, y_start=0, 
+            x_end=240, y_end=240):
+        '''Scan the entire image and find all positive and 
+        negative pixels.
+        
+        Parameters:
+        x: The maximum x-coordinate of the image. Default is 240.
+        y: The maximum y-coordinate of the image. Default is 240.
+        '''
+        positive_negative_map = {}
+        for i in range(x_start, x_end):
+            for j in range(y_start, y_end):
+                pixel_colour = self.xai_image[i][j]
+                if self.__is_positive_pixel(pixel_colour):
+                    try:
+                        counter = positive_negative_map['positive']
+                        counter += 1
+                    except KeyError:
+                        counter = 0
+
+                    positive_negative_map['positive'] = counter
+                else:
+                    try:
+                        counter = positive_negative_map['negative']
+                        counter += 1
+                    except KeyError:
+                        counter = 0
+
+                    positive_negative_map['negative'] = counter
+        
+        return positive_negative_map
+
+    def __get_tumor_positive_negative_map(self):
+        area_coords = self.td.get_tumor_area_coords()
+        tumor_pn_map = self.__create_positive_negative_map(
+                    x_start=area_coords[0],
+                    y_start=area_coords[3],
+                    x_end=area_coords[1],
+                    y_end=area_coords[2]
+                )
+        return tumor_pn_map
+
+    def __is_positive_pixel(self, rgb_value):
+        '''Return True if the RGB values is a positive pixel, False 
+        otherwise.
+
+        Parameters:
+        rgb_value: RGB value to check.
+        '''
+        (r, g, b) = rgb_value
+        if self.__xai_method_is_lime():
+            return g > r > b
+        else:
+            return r > g > b
+
+    def __xai_method_is_lime(self):
+        return self.xai_method == 'lime'
