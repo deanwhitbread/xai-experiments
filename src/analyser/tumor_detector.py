@@ -7,7 +7,7 @@ __version__ = '16-07-2023'
 import cv2
 import numpy as np
 
-RGB_THRESHOLD = (160,160,160)
+RGB_THRESHOLD = (130,130,130)
 
 def __detect_tumor_areas(blurred_image):
     '''Return a list of circle coordinates where tumors have 
