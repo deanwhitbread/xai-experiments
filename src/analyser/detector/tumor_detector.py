@@ -43,6 +43,40 @@ class TumorDetector:
             image_drawer.draw()
 
         return self.image
+    
+    def image_has_tumor(self):
+        '''Return if the image contains a tumor.'''
+        return self.find_optimal_tumor_coord() != None
+
+    def get_tumor_area_coords(self):
+        '''Return a list of coordinate that represent each coord of the
+        detected region.
+
+        Coords in the list are in the order: 
+            [topLeft, topRight, btmLeft, btmRight]
+        '''
+        (x, y, r) = self.find_optimal_tumor_coord()[0]
+        top = y+r
+        bottom = y-r
+        left = x-r
+        right = x+r
+
+        coords = [
+                    top+left,
+                    top+right,
+                    bottom+left,
+                    bottom+right,
+                ]
+
+        for i in range(0, len(coords)):
+            coord = coords[i]
+            if coord < 0:
+                coords[i] = 0
+            elif coord > 240:
+                coords[i] = 240
+
+        return coords
+
 
     def __get_blurred_image(self):
         '''Return a blurred version of the image.'''
