@@ -30,8 +30,12 @@ class TumorDetector:
         optimal_coord = None
         if tumor_areas is not None:
             optimal_coord = self.__optimise_detection(tumor_areas)
-
-        return optimal_coord
+        
+        if optimal_coord == []:
+            # incorrectly identified tumors removed from subset.
+            return None
+        else:
+            return optimal_coord
 
     def highlight_tumor_on_image(self):
         '''Return the original image with the tumors highlighted.
