@@ -14,8 +14,8 @@ class ImageAnalyser:
         Parameters:
         xai_tool: The XaiTool object used to explain the image. 
         '''
-        self.image = xai_tool.target_im
-        self.xai_image = xai_tool.expl
+        self.image = xai_tool.get_target_image()
+        self.xai_image = xai_tool.get_explained_image()
         self.xai_method = self.__get_xai_method_name(xai_tool)
         self.td = TumorDetector(self.image)
         print(self.xai_method)       
