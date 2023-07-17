@@ -8,18 +8,17 @@ __version__ = '16-07-2023'
 from analyser.detector.tumor_detector import TumorDetector
 
 class ImageAnalyser:
-    def __init__(self, original_image, explained_image, xai_method):
+    def __init__(self, xai_tool):
         '''Construct an ImageAnalyser object.
 
         Parameters:
-        original_image: The original image that was explained by the xai.
-        explained_image: The image produced by the xai tool. 
-        xai_method: The method used to explain the image.
+        xai_tool: The XaiTool object used to explain the image. 
         '''
-        self.image = original_image
-        self.xai_image = explained_image
-        self.xai_method = xai_method.strip().lower()
+        self.image = xai_tool.target_im
+        self.xai_image = xai_tool.expl
+        self.xai_method = self.__get_xai_method_name(xai_tool)
         self.td = TumorDetector(self.image)
+        print(self.xai_method)       
 
     def precision_score(self):
         '''Return the precision score of the explained image.'''
@@ -199,3 +198,13 @@ class ImageAnalyser:
            image was LIME. 
         '''
         return self.xai_method == 'lime'
+
+    def __get_xai_method_name(self, xai_tool):
+        '''Return the name of the method used to explain the
+           image.
+
+        Parameters:
+        xai_tool: The XaiTool object used to explain the image.
+        '''
+        name = str(xai_tool)
+        return name[name.rfind('.')+1:name.find('X')].lower()

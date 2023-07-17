@@ -116,7 +116,7 @@ class GradCamXaiTool(XaiTool):
         ax[1].imshow(self.expl)
         ax[2].imshow(self.highlight_im)
         
-        analyser = ImageAnalyser(self.target_im, self.expl, 'gradcam')
+        analyser = ImageAnalyser(self)
         print(analyser.results())
 
         plt.show()
