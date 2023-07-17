@@ -48,44 +48,89 @@ class ImageAnalyser:
         return output
 
     def __analyse_image(self):
+        '''Analyse the image and return a map of scores for true 
+        positives (tp), true negatives (tn), false positives (fp),
+        and false negatives (fn).
+
+        The key for each scores is the acronym inside the bracket.
+        '''
         score_map = {}
         pn_map = self.__create_positive_negative_map()
         
-        score_map['tp'] = self.__find_true_positive(pn_map)
-        score_map['tn'] = self.__find_true_negative(pn_map)
-        score_map['fp'] = self.__find_false_positive(pn_map)
-        score_map['fn'] = self.__find_false_negative(pn_map)
+        if self.td.image_has_tumor():
+            tumor_pn_map = self.__get_tumor_positive_negative_map()
+        else:
+            tumor_pn_map = None
+
+        score_map['tp'] = self.__find_true_positive(pn_map, tumor_pn_map)
+        score_map['tn'] = self.__find_true_negative(pn_map, tumor_pn_map)
+        score_map['fp'] = self.__find_false_positive(pn_map, tumor_pn_map)
+        score_map['fn'] = self.__find_false_negative(pn_map, tumor_pn_map)
 
         return score_map
 
-    def __find_true_positive(self, pn_map):
-        if self.td.image_has_tumor():
-            tumor_pn_map = self.__get_tumor_positive_negative_map()
+    def __find_true_positive(self, pn_map, tumor_pn_map):
+        '''Return a numerical value representing the true positive.
 
+        Parameters:
+        pn_map: A map of the values of positive and negative pixels in 
+                the entire image. 
+        tumor_pn_map: A map of the values of positive and negative pixels
+                      where the tumor is located on the image. 
+                      If no tumor is present, a value from the map of 
+                      the entire image is returned.
+        '''
+        if tumor_pn_map is not None:
             return tumor_pn_map['positive']
         else:
             return pn_map['positive']
 
-    def __find_true_negative(self, pn_map):
-        if self.td.image_has_tumor():
-            tumor_pn_map = self.__get_tumor_positive_negative_map()
+    def __find_true_negative(self, pn_map, tumor_pn_map):
+        '''Return a numerical value representing the true negative.
 
+        Parameters:
+        pn_map: A map of the values of positive and negative pixels in
+                the entire image.
+        tumor_pn_map: A map of the values of positive and negative pixels
+                      where the tumor is located on the image.
+                      If no tumor is present, a value from the map of
+                      the entire image is returned.
+        '''
+
+        if tumor_pn_map is not None:
             return tumor_pn_map['negative']
         else:
             return pn_map['negative']
 
-    def __find_false_positive(self, pn_map):
-        if self.td.image_has_tumor():
-            tumor_pn_map = self.__get_tumor_positive_negative_map()
+    def __find_false_positive(self, pn_map, tumor_pn_map):
+        '''Return a numerical value representing the false positive.
 
+        Parameters:
+        pn_map: A map of the values of positive and negative pixels in
+                the entire image.
+        tumor_pn_map: A map of the values of positive and negative pixels
+                      where the tumor is located on the image.
+                      If no tumor is present, a value from the map of
+                      the entire image is returned.
+        '''
+
+        if tumor_pn_map is not None:
             return pn_map['positive'] - tumor_pn_map['positive']
         else:
             return pn_map['positive']
 
-    def __find_false_negative(self, pn_map):
-        if self.td.image_has_tumor():
-            tumor_pn_map = self.__get_tumor_positive_negative_map()
+    def __find_false_negative(self, pn_map, tumor_pn_map):
+        '''Return a numerical value representing the false negative.
 
+        Parameters:
+        pn_map: A map of the values of positive and negative pixels in
+                the entire image.
+        tumor_pn_map: A map of the values of positive and negative pixels
+                      where the tumor is located on the image.
+                      If no tumor is present, a value from the map of
+                      the entire image is returned.
+        '''
+        if tumor_pn_map is not None:
             return pn_map['negative'] - tumor_pn_map['negative']
         else:
             return pn_map['negative']
@@ -123,6 +168,10 @@ class ImageAnalyser:
         return positive_negative_map
 
     def __get_tumor_positive_negative_map(self):
+        '''Return a map with 'positive' and 'negative' keys that hold
+           the value of positive and negative pixels in the area where
+           the tumor is located. 
+        '''
         area_coords = self.td.get_tumor_area_coords()
         tumor_pn_map = self.__create_positive_negative_map(
                     x_start=area_coords[0],
@@ -146,4 +195,7 @@ class ImageAnalyser:
             return r > g > b
 
     def __xai_method_is_lime(self):
+        '''Return if the explainable AI method used to explain the
+           image was LIME. 
+        '''
         return self.xai_method == 'lime'
