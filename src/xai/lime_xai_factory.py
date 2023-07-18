@@ -23,5 +23,6 @@ class LimeXaiFactory(XaiFactory):
         '''Return the explainable AI (XAI) tool used by the class.'''
         return LimeXaiTool(
                     self.get_target_image(), 
-                    self.get_model()
+                    self.get_model(),
+                    self.get_highlight_image()
                 )

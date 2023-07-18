@@ -11,10 +11,11 @@ from lime.lime_image import LimeImageExplainer
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.segmentation import mark_boundaries
+from analyser.image_analyser import ImageAnalyser
 
 class LimeXaiTool(XaiTool):
 
-    def __init__(self, target_im, model):
+    def __init__(self, target_im, model, highlight_im):
         '''Constructor for LimeXaiTool class.
 
         Parameters:
@@ -26,6 +27,8 @@ class LimeXaiTool(XaiTool):
         
         expl_object = self.get_explaination(model)
         self.set_explained_image(image=None, expl_object=expl_object)
+
+        self.highlight_image = highlight_im
     
     def get_explaination(self, model) -> object:
         '''Return the explaination object of the xai tool.
@@ -34,13 +37,21 @@ class LimeXaiTool(XaiTool):
         target_im: The target image being classified.
         model: The classifcation model used to classify the target image.
         '''
-        return self.lime.explain_instance(self.get_target_image(), model)
+        return self.lime.explain_instance(
+                    self.get_target_image(), 
+                    model,
+                    num_samples=200     #remove me
+                )
 
     def show(self):
         '''Display the XAI tool's explaination.'''
-        fig, ax = plt.subplots(1,2)
+        fig, ax = plt.subplots(1,3)
         ax[0].imshow(self.get_target_image())
         ax[1].imshow(self.get_explained_image())
+        ax[2].imshow(self.highlight_image)
+        
+        analyser = ImageAnalyser(self)
+        print(analyser.results())
 
         plt.show()
 
@@ -58,7 +69,7 @@ class LimeXaiTool(XaiTool):
                 )
 
         self.explained_image = mark_boundaries(image, mask)
-
+        
     def get_target_image(self):
         '''Return the target image being explained by the XAI tool.'''
         return self.target_image

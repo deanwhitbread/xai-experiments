@@ -25,16 +25,22 @@ class ImageAnalyser:
         score_map = self.__analyse_image()
         tp = score_map['tp']
         fp = score_map['fp']
-
-        return tp / (tp + fp)
+        
+        try:
+            return tp / (tp + fp)
+        except ZeroDivisionError:
+            return 0
 
     def recall_score(self):
         '''Return the recall score of the explained image.'''
         score_map = self.__analyse_image()
         tp = score_map['tp']
         fn = score_map['fn']
-
-        return tp / (tp + fn)
+        
+        try:
+            return tp / (tp + fn)
+        except ZeroDivisionError:
+            return 0
 
     def results(self):
         '''Display the precision score and recall score.'''
@@ -143,25 +149,17 @@ class ImageAnalyser:
         x: The maximum x-coordinate of the image. Default is 240.
         y: The maximum y-coordinate of the image. Default is 240.
         '''
-        positive_negative_map = {}
+        positive_negative_map = {'positive':0, 'negative':0}
         for i in range(x_start, x_end):
             for j in range(y_start, y_end):
                 pixel_colour = self.xai_image[i][j]
                 if self.__is_positive_pixel(pixel_colour):
-                    try:
-                        counter = positive_negative_map['positive']
-                        counter += 1
-                    except KeyError:
-                        counter = 0
-
+                    counter = positive_negative_map['positive']
+                    counter += 1
                     positive_negative_map['positive'] = counter
                 else:
-                    try:
-                        counter = positive_negative_map['negative']
-                        counter += 1
-                    except KeyError:
-                        counter = 0
-
+                    counter = positive_negative_map['negative']
+                    counter += 1
                     positive_negative_map['negative'] = counter
         
         return positive_negative_map
@@ -172,12 +170,14 @@ class ImageAnalyser:
            the tumor is located. 
         '''
         area_coords = self.td.get_tumor_area_coords()
+        print(area_coords)
         tumor_pn_map = self.__create_positive_negative_map(
                     x_start=area_coords[0],
                     y_start=area_coords[3],
                     x_end=area_coords[1],
                     y_end=area_coords[2]
                 )
+
         return tumor_pn_map
 
     def __is_positive_pixel(self, rgb_value):
@@ -189,9 +189,11 @@ class ImageAnalyser:
         '''
         (r, g, b) = rgb_value
         if self.__xai_method_is_lime():
-            return g > r > b
+            r, g, b = r*252, g*252, b*252
+
+            return g > r >= b
         else:
-            return r > g > b
+            return r > g >= b
 
     def __xai_method_is_lime(self):
         '''Return if the explainable AI method used to explain the
