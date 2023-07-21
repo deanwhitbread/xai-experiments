@@ -18,7 +18,6 @@ class ImageAnalyser:
         self.xai_image = xai_tool.get_explained_image()
         self.xai_method = self.__get_xai_method_name(xai_tool)
         self.td = TumorDetector(self.image)
-        print(self.xai_method)       
 
     def precision_score(self):
         '''Return the precision score of the explained image.'''
@@ -71,7 +70,7 @@ class ImageAnalyser:
         score_map['tn'] = self.__find_true_negative(pn_map, tumor_pn_map)
         score_map['fp'] = self.__find_false_positive(pn_map, tumor_pn_map)
         score_map['fn'] = self.__find_false_negative(pn_map, tumor_pn_map)
-
+        
         return score_map
 
     def __find_true_positive(self, pn_map, tumor_pn_map):
@@ -141,18 +140,32 @@ class ImageAnalyser:
             return pn_map['negative']
 
     def __create_positive_negative_map(self, x_start=0, y_start=0, 
-            x_end=240, y_end=240):
+            x_end=None, y_end=None):
         '''Scan the entire image and find all positive and 
         negative pixels.
+
+        x_end and y_end is None by default. When these arguments 
+        are None, the shape of the image is used. 
         
         Parameters:
-        x: The maximum x-coordinate of the image. Default is 240.
-        y: The maximum y-coordinate of the image. Default is 240.
+        x: The maximum x-coordinate of the image. Default is None.
+        y: The maximum y-coordinate of the image. Default is None.
         '''
         positive_negative_map = {'positive':0, 'negative':0}
+
+        if x_end == None:
+            x_end = self.xai_image.shape[0]
+        if y_end == None:
+            y_end = self.xai_image.shape[1]
+
+        #print('x:', f'({x_start}, {x_end})', 'y:', f'({y_start}, {y_end})')
+
         for i in range(x_start, x_end):
             for j in range(y_start, y_end):
-                pixel_colour = self.xai_image[i][j]
+                pixel_colour = self.xai_image[j][i]     # previous self.xai_image[i][j]
+                
+                #print(f'({i}, {j}):', f'{pixel_colour}')
+                
                 if self.__is_positive_pixel(pixel_colour):
                     counter = positive_negative_map['positive']
                     counter += 1
@@ -162,6 +175,8 @@ class ImageAnalyser:
                     counter += 1
                     positive_negative_map['negative'] = counter
         
+        print(positive_negative_map)
+
         return positive_negative_map
 
     def __get_tumor_positive_negative_map(self):
@@ -170,7 +185,6 @@ class ImageAnalyser:
            the tumor is located. 
         '''
         area_coords = self.td.get_tumor_area_coords()
-        print(area_coords)
         tumor_pn_map = self.__create_positive_negative_map(
                     x_start=area_coords[0],
                     y_start=area_coords[3],
@@ -187,13 +201,16 @@ class ImageAnalyser:
         Parameters:
         rgb_value: RGB value to check.
         '''
-        (r, g, b) = rgb_value
+        if len(rgb_value) == 4:
+            (r, g, b) = rgb_value[:3]   # convert from RGBA to RGB
+        else:
+            (r, g, b) = rgb_value
+        
         if self.__xai_method_is_lime():
             r, g, b = r*252, g*252, b*252
-
-            return g > r >= b
+            return g>r>=b
         else:
-            return r > g >= b
+            return r>g>=b
 
     def __xai_method_is_lime(self):
         '''Return if the explainable AI method used to explain the
