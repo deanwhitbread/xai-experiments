@@ -57,7 +57,7 @@ class ShapXaiTool(XaiTool):
         '''
         shap_values = expl_object(
                     self.images[-1],
-                    max_evals=100,         # change back to 5000
+                    max_evals=5000,
                     batch_size=100, 
                     outputs=shap.Explanation.argsort.flip[:2]
                 )
@@ -73,8 +73,6 @@ class ShapXaiTool(XaiTool):
                     renderer, 
                     unsampled=True      # retain image dimensions
                 )[0]
-        plt.cla()
-        plt.imshow(self.explained_image)
 
     def get_target_image(self):
         '''Return the target image being explained by the XAI tool.'''
