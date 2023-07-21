@@ -108,7 +108,7 @@ class ImageAnalyser:
         if tumor_pn_map is not None:
             return tumor_pn_map['total'] - tumor_pn_map['p']
         else:
-            return pn_map['n']
+            return pn_map['p']
 
     def __find_false_positive(self, pn_map, tumor_pn_map):
         '''Return an integer value representing the false positive.
