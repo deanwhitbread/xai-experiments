@@ -2,13 +2,15 @@
     The TumorDetector class identifies brain tumors in a MRI scan. 
 '''
 __author__ = 'Dean Whitbread'
-__version__ = '16-07-2023'
+__version__ = '21-07-2023'
 
 import cv2
 import numpy as np
 from analyser.detector.drawer.image_drawer import ImageDrawer
+from analyser.detector.pixel_range import PixelRange
 
 RGB_THRESHOLD = (130,130,130)
+IMAGE_SIZE = 240
 
 class TumorDetector:
     def __init__(self, image):
@@ -52,29 +54,32 @@ class TumorDetector:
         '''Return if the image contains a tumor.'''
         return self.find_optimal_tumor_coord() != None
 
-    def get_tumor_area_coords(self):
-        '''Return a list of coordinate that represent each coord of the
-        detected region.
+    def get_tumor_area_ranges(self):
+        '''Return a list of PixelRanges objects that represent a range
+        in the detected region.
 
-        Coords in the list are in the order: 
-            [left, right, top, bottom]
+        PixelRanges objects are in the order: 
+            [x_pixel_range_object, y_pixel_range_object]
         '''
         (x, y, r) = self.find_optimal_tumor_coord()[0]
-        top = y+r
-        bottom = y-r
-        left = x-r
-        right = x+r
+        y_start, y_end = y-r, y+r
+        x_start, x_end = x-r, x+r
+        
 
-        coords = [left, right, top, bottom]
+        points = [y_start, y_end, x_start, x_end]
 
-        for i in range(0, len(coords)):
-            coord = coords[i]
-            if coord < 0:
-                coords[i] = 0
-            elif coord > 240:
-                coords[i] = 240
+        for i in range(len(points)):
+            if points[i] > IMAGE_SIZE:
+                points[i] = IMAGE_SIZE
+            elif points[i] < 0:
+                points[i] = 0
 
-        return coords
+        x_pixel_range = PixelRange(start=points[2], end=points[3])
+        y_pixel_range = PixelRange(start=points[0], end=points[1]) 
+        
+        xy_ranges = [x_pixel_range, y_pixel_range]
+
+        return xy_ranges
 
 
     def __get_blurred_image(self):
