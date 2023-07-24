@@ -153,7 +153,7 @@ def __strip_choice_str(choice_str):
     '''
     return choice_str.lower().replace('(', '').replace(')', '')
 
-def is_input_str_this_choice(input_str, choice_str): 
+def is_this_choice(input_str, choice_str):
     '''Check if the input string matches the choice string. 
 
     True if they match, False otherwise. 
