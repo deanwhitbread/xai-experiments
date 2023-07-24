@@ -33,8 +33,9 @@ class TumorDetector:
         if tumor_areas is not None:
             optimal_coord = self.__optimise_detection(tumor_areas)
         
-        if optimal_coord == []:
-            # incorrectly identified tumors removed from subset.
+        if optimal_coord == [] or optimal_coord is None:
+            # incorrectly identified tumors removed from subset
+            # or no potential tumors detected.
             return None
         else:
             return optimal_coord
@@ -106,8 +107,10 @@ class TumorDetector:
             minRadius=35,
             maxRadius=60,
         )
-    
-        circles = np.round(circles[0, :]).astype("int")
+        
+        if circles is not None:
+            circles = np.round(circles[0, :]).astype("int")
+        
         return circles
     
     def __optimise_detection(self, areas):
