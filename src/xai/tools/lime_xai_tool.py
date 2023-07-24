@@ -40,7 +40,6 @@ class LimeXaiTool(XaiTool):
         return self.lime.explain_instance(
                     self.get_target_image(), 
                     model,
-                    num_samples=200     #remove me
                 )
 
     def show(self):
