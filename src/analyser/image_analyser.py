@@ -195,16 +195,15 @@ class ImageAnalyser:
                     # neither a positive or negative colour
                     continue
                 if pixel.is_negative(pixel_colour, self.xai_method):
-                    counter = pn_map['n']
+                    counter = pn_map['n'] # negative counter
                     counter += 1
                     pn_map['n'] = counter
                 else:
-                    # pixel is positive colour
-                    counter = pn_map['p']
+                    counter = pn_map['p'] # positive counter
                     counter += 1
                     pn_map['p'] = counter
 
-        # store total pixels counted
+        # total pixels counted
         pn_map['total'] = (x_end-x_start)*(y_end-y_start)
 
         return pn_map
