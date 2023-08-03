@@ -42,19 +42,29 @@ class ImageAnalyser:
             return 0
     
     def accuracy_score(self):
-        # TODO: Implement function.
-        pass
+        '''Return the accuracy score of the explained_image.'''
+        tp = self.score_map['tp']
+        tn = self.score_map['tn']
+        fp = self.score_map['fp']
+        fn = self.score_map['fn']
+
+        return (tp+tn) / (tp+tn+fp+fn)
 
     def f1_score(self):
-        # TODO: Implement function
-        pass
+        '''Return the F1 score of the explained image.'''
+        p_score = self.precision_score()
+        r_score = self.recall_score()
+
+        return (2*p_score*r_score) / (p_score+r_score)
 
     def results(self):
         '''Display the precision score and recall score.'''
         header = '*' * 10
         output = f'\n{header}\nResults\n{header}\n'
+        output += f'Accuracy Score: {self.accuracy_score()}\n'
         output += f'Precision Score: {self.precision_score()}\n'
         output += f'Recall Score: {self.recall_score()}\n'
+        output += f'F1 Score: {self.f1_score()}\n'
         output += header
 
         return output

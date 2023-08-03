@@ -79,8 +79,8 @@ class XaiExperiment:
                   is None.
         '''
         if not user_cmd:
-            p_score_map, r_score_map = self.__get_all_results()
-            self.display_results(p_score_map, r_score_map)
+            p_score_map, r_score_map, acc_score_map, f1_score_map = self.__get_all_results()
+            self.display_results(p_score_map, r_score_map, acc_score_map, f1_score_map)
         else:
             image_path = self.get_current_image_path()
 
@@ -110,7 +110,7 @@ class XaiExperiment:
         return xai
 
     def __get_tool_scores(self, xai):
-        '''Return the precision and recall score for the tools.
+        '''Return the scores for the tool used.
 
         Parameters:
         xai: The XaiTool object used to explain the input image.  
@@ -119,17 +119,21 @@ class XaiExperiment:
         analyser = ImageAnalyser(tool)
         p_score = analyser.precision_score()
         r_score = analyser.recall_score()
+        acc_score = analyser.accuracy_score()
+        f1_score = analyser.f1_score()
         tool_name = analyser.xai_method
 
-        return (p_score, r_score, tool_name)
+        return (p_score, r_score, acc_score, f1_score, tool_name)
 
     def __get_all_results(self):
-        '''Return the precision score and recall scores for all the XAI
-        tools, across the entire dataset.
+        '''Return the scores for all the XAI tools, across the entire 
+           dataset.
         '''
         index = 0
         p_score_map = {'lime':0,'shap':0,'gradcam':0} # precision score
         r_score_map = {'lime':0,'shap':0,'gradcam':0} # recall score
+        acc_score_map = {'lime':0,'shap':0,'gradcam':0} # accuracy score
+        f1_score_map = {'lime':0,'shap':0,'gradcam':0}
 
         # TODO: Create files to store individual scores.
 
@@ -144,27 +148,35 @@ class XaiExperiment:
             xai_tools = self.__get_xai_tools(image_path) 
 
             for item in xai_tools:
-                p_score, r_score, tool_name = self.__get_tool_scores(item)
+                p_score, r_score, acc_score, f1_score, tool_name = self.__get_tool_scores(item)
 
                 p_score_map[tool_name] = (
                         (p_score_map[tool_name] + p_score) / index
-                        )
+                    )
                 r_score_map[tool_name] = (
                         (r_score_map[tool_name] + r_score) / index
                      )
+                acc_score_map[tool_name] = (
+                        (acc_score_map[tool_name] + acc_score) / index
+                    )
+                f1_score_map[tool_name] = (
+                        (f1_score_map[tool_name] + f1_score) / index
+                    )
 
                 # TODO: Append image id, precision and recall score to a file.
 
             del xai_tools
 
-        return (p_score_map, r_score_map)
+        return (p_score_map, r_score_map, acc_score_map, f1_score_map)
 
-    def display_results(self, p_score_map, r_score_map):
+    def display_results(self, p_score_map, r_score_map, acc_score_map, f1_score_map):
         '''Return the overall score for the XAI tool.'''
         output = ""
         for name in p_score_map.keys():
-            output += (f"{name.title()}:\n"+(" " * 5)+
-                    f"Precision Score: {p_score_map[name]}\n"+(" " * 5)
-                    +f"Recall Score: {r_score_map[name]}\n"
+            output += (f"{name.title()}:\n"+(" " * 5)
+                    +f"Accuracy Score: {acc_score_map[name]}\n"+(" " * 5)
+                    +f"Precision Score: {p_score_map[name]}\n"+(" " * 5)
+                    +f"Recall Score: {r_score_map[name]}\n"+(" " * 5)
+                    +f"F1 Score: {f1_score_map[name]}\n"
             )
         print(output)
