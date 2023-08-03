@@ -40,6 +40,14 @@ class ImageAnalyser:
             return tp / (tp + fn)
         except ZeroDivisionError:
             return 0
+    
+    def accuracy_score(self):
+        # TODO: Implement function.
+        pass
+
+    def f1_score(self):
+        # TODO: Implement function
+        pass
 
     def results(self):
         '''Display the precision score and recall score.'''

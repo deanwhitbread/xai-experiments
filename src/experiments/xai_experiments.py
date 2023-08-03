@@ -131,12 +131,17 @@ class XaiExperiment:
         p_score_map = {'lime':0,'shap':0,'gradcam':0} # precision score
         r_score_map = {'lime':0,'shap':0,'gradcam':0} # recall score
 
+        # TODO: Create files to store individual scores.
+
         while index < 1000:        # len(paths) == 8610
             image_path = self.paths[index]
+            
+            # TODO: generate unique id using the image folder name.
+
             index += 1
             print(f'Analysing image {index}...', end='\r')
 
-            xai_tools = self.__get_xai_tools(image_path)
+            xai_tools = self.__get_xai_tools(image_path) 
 
             for item in xai_tools:
                 p_score, r_score, tool_name = self.__get_tool_scores(item)
@@ -146,7 +151,9 @@ class XaiExperiment:
                         )
                 r_score_map[tool_name] = (
                         (r_score_map[tool_name] + r_score) / index
-                        )
+                     )
+
+                # TODO: Append image id, precision and recall score to a file.
 
             del xai_tools
 

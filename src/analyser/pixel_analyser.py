@@ -39,9 +39,11 @@ class PixelAnalyser:
             raise ValueError('Parameter must be a RGB tuple not RGBA.')
         
         (r, g, b) = pixel_colour
+        
+        # TODO: Check that both SHAP and Lime ignore colours with same 
+        # saturation. 
 
         if PixelAnalyser.__is_lime(xai_method):
-            # Red dominance represents negative pixel.
             return (r>b and r>g)
         else:
             return ((b>r and b>g) or (g>r and g>b and g>140 and b>r))
