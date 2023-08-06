@@ -15,6 +15,7 @@ from xai.grad_cam_xai_factory import GradCamXaiFactory
 from xai.lime_xai_factory import LimeXaiFactory
 from xai.shap_xai_factory import ShapXaiFactory
 from analyser.image_analyser import ImageAnalyser
+from doc_writer.csv_writer import CsvWriter
 
 XAI_CHOICES = [
             get_shortcut_key_str('LIME', 'l'),
@@ -134,14 +135,14 @@ class XaiExperiment:
         r_score_map = {'lime':0,'shap':0,'gradcam':0} # recall score
         acc_score_map = {'lime':0,'shap':0,'gradcam':0} # accuracy score
         f1_score_map = {'lime':0,'shap':0,'gradcam':0}
-
-        # TODO: Create files to store individual scores.
+        writer = CsvWriter()
         
         while index < len(self.paths):
             image_path = self.paths[index]
-            image_id = (image_path[
-                                image_path.index('Brats18'):image_path.index('/jpg')
-                            ] + '-' + image_path[image_path.index('output'):]
+            image_id = (
+                    image_path[image_path.index('Brats18'):image_path.index('/jpg')]
+                    + '-'
+                    + image_path[image_path.index('output'):image_path.index('.jpg')]
                         )
 
             index += 1
@@ -152,20 +153,27 @@ class XaiExperiment:
             for item in xai_tools:
                 p_score, r_score, acc_score, f1_score, tool_name = self.__get_tool_scores(item)
 
-                p_score_map[tool_name] = (
-                        (p_score_map[tool_name] + p_score) / index
-                    )
-                r_score_map[tool_name] = (
-                        (r_score_map[tool_name] + r_score) / index
-                     )
-                acc_score_map[tool_name] = (
-                        (acc_score_map[tool_name] + acc_score) / index
-                    )
-                f1_score_map[tool_name] = (
-                        (f1_score_map[tool_name] + f1_score) / index
-                    )
+                new_p_score = (p_score_map[tool_name] + p_score) / index
+                new_r_score = (r_score_map[tool_name] + r_score) / index
+                new_acc_score = (acc_score_map[tool_name] + acc_score) / index
+                new_f1_score = (f1_score_map[tool_name] + f1_score) / index
 
-                # TODO: Append image id, precision and recall score to a file.
+                p_score_map[tool_name] = new_p_score
+                r_score_map[tool_name] = new_r_score
+                acc_score_map[tool_name] = new_acc_score
+                f1_score_map[tool_name] = new_f1_score
+
+                if tool_name=='lime':
+                    file = writer.get_lime_csv_file()
+                elif tool_name=='gradcam':
+                    file = writer.get_gradcam_csv_file()
+                elif tool_name=='shap':
+                    file = writer.get_shap_csv_file()
+                else:
+                    file = None
+
+                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score}')
+                file.write(message)
 
             del xai_tools
 

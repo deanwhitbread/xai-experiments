@@ -10,6 +10,9 @@ __version__='06-08-2023'
 
 import os
 
+RESULTS_PATH = '../results'
+SRC_PATH = '../src'
+
 class File:
     def __init__(self, filename, initial_message=None):
         '''Construct a new File object.
@@ -29,14 +32,14 @@ class File:
         initial_message: Initialise the file with a message. Default is
                          None.
         '''
-        os.chdir('results')
+        os.chdir(RESULTS_PATH)
         csv_file = open(filename, 'w')
 
         if initial_message:
             csv_file.write(initial_message)
         
         csv_file.close()
-        os.chdir('..')
+        os.chdir(SRC_PATH)
 
         return csv_file
 
@@ -46,7 +49,7 @@ class File:
         Parameters:
         message: The message to add to the file.
         '''
-        os.chdir('results')
+        os.chdir(RESULTS_PATH)
 
         with open(self.filename, 'r') as file:
             if not len(file.readlines())==0:
@@ -55,4 +58,4 @@ class File:
         with open(self.filename, 'a') as file:
             file.write(message)
             file.close()
-        os.chdir('..')
+        os.chdir(SRC_PATH)

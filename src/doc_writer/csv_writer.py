@@ -10,11 +10,9 @@ __version__='06-08-2023'
 
 import os
 from datetime import datetime
+from doc_writer.file import File
 
-#from doc_writer.file import File
-from file import File
-
-CSV_TITLES = 'id, accuracy, precision, recall, f1'
+CSV_TITLES = 'id,accuracy,precision,recall,f1'
 
 class CsvWriter:
     def __init__(self):
