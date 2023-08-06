@@ -3,7 +3,7 @@
     (XAI) experiments. 
 '''
 __author__='Dean Whitbread'
-__version__='24-07-2023'
+__version__='03-08-2023'
 
 from tensorflow.keras.models import load_model
 from misc.helpers import (
@@ -136,14 +136,16 @@ class XaiExperiment:
         f1_score_map = {'lime':0,'shap':0,'gradcam':0}
 
         # TODO: Create files to store individual scores.
-
-        while index < 1000:        # len(paths) == 8610
+        
+        while index < len(self.paths):
             image_path = self.paths[index]
-            
-            # TODO: generate unique id using the image folder name.
+            image_id = (image_path[
+                                image_path.index('Brats18'):image_path.index('/jpg')
+                            ] + '-' + image_path[image_path.index('output'):]
+                        )
 
             index += 1
-            print(f'Analysing image {index}...', end='\r')
+            print(f'Analysing image {index}/{len(self.paths)}...', end='\r')
 
             xai_tools = self.__get_xai_tools(image_path) 
 

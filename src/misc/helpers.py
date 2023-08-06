@@ -99,12 +99,22 @@ def __get_images(path, folder):
     images = []
     for folder in os.listdir(cd):
         jpg_folder = os.listdir(f'{cd}/{folder}/jpg')
+        potential_image_array = []
         for image in jpg_folder:
             image_number = __get_image_number(image)
             
             # filter out blank images and frontal scans
             if image_number >= 70 and image_number <= 110:
-                images.append(f'{cd}/{folder}/jpg/{image}')
+                potential_image_array.append(f'{cd}/{folder}/jpg/{image}')
+        
+        # randomly choose 10 images for the subset.
+        selected_images_map = {}
+        for i in range(0, 10):
+            index = rand.randint(0, len(potential_image_array)-1)
+            if index not in selected_images_map.keys():
+                selected_images_map[index] = potential_image_array[index]
+
+        images += list(selected_images_map.values())
             
     return images
 
