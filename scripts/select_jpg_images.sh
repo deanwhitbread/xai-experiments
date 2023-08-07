@@ -49,7 +49,9 @@ do
 					;;
 				*) 
 					ID="$image_dir-$hundred_num$tens_num"
-					if [[ ${tens_num:0:1} -lt ${MAX_IMAGE_RANGE:1:1} ]]
+					if [[ ${tens_num:0:1} -lt ${MAX_IMAGE_RANGE:1:1} ||
+						${tens_num} -eq ${MAX_IMAGE_RANGE:1:2}
+						]]
 					then
 						if [[ ${tens_num:1:1} -lt ${MAX_IMAGE_RANGE:1:2} ]] 
 						then
@@ -59,14 +61,6 @@ do
 								cp "$jpg" "$IMAGES_PATH/$ID"
 							fi
 						fi
-					elif [[ ${tens_num} -eq ${MAX_IMAGE_RANGE:1:2} ]]
-					then
-						mod=$(expr $tens_num % 4)
-                                                if [[ $mod -eq 0 ]]
-                                                then
-                                                	cp "$jpg" "$IMAGES_PATH/$ID"
-						fi
-
 					fi
 					;;
 			esac
