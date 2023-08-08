@@ -1,18 +1,12 @@
 '''
     helpers.py file contains various methods that
     assist with the creation of the experiments.
-
-    Most methods are publc and the file uses a seeder
-    to ensure reproducable results.
 '''
 __author__ = 'Dean Whitbread'
-__version__ = '11-07-2023'
+__version__ = '07-08-2023'
 
 import os
-import random as rand
 import misc.wrapper as wrapper
-
-rand.seed(12)
 
 def get_shortcut_key_str(word, key):
     '''Return a string highlighting the shortcut key with brackets.
@@ -61,99 +55,6 @@ def list_to_str(items_list):
             output_str += item + ', '
 
     return output_str
-
-
-def __get_image_number(image_name):
-    '''Return the image number. 
-
-    The numbers in the image name are in the
-    format [name]-###.jpg, where # represents a digit
-    between 0-9.
-
-    Parameters:
-    image_name: The path of the image.
-    '''
-    dot_index = image_name.find('.')
-    ones_digit = dot_index-1
-    tens_digit = dot_index-2
-    hundreds_digit = dot_index-3
-
-    if image_name[hundreds_digit] != 0:
-        return (int(image_name[hundreds_digit] + image_name[tens_digit] 
-            + image_name[ones_digit]))
-    elif image_name[tens_digit] != 0:
-        return int(image_name[tens_digit] + image_name[ones_digit])
-    else:
-        return int(image_name[ones_digit])
-
-def __get_images(path, folder):
-    '''Return a list of paths to all the images in the dataset. 
-
-    Parameters:
-    path: The path to the datasets' parent directory.
-    folder: The child folder stored in the first level of the parent 
-            folder. 
-    '''
-    cd = f'{path}/{folder}'
-    
-    images = []
-    for folder in os.listdir(cd):
-        jpg_folder = os.listdir(f'{cd}/{folder}/jpg')
-        potential_image_array = []
-        for image in jpg_folder:
-            image_number = __get_image_number(image)
-            
-            # filter out blank images and frontal scans
-            if image_number >= 70 and image_number <= 110:
-                potential_image_array.append(f'{cd}/{folder}/jpg/{image}')
-        
-        # randomly choose 10 images for the subset.
-        selected_images_map = {}
-        for i in range(0, 10):
-            index = rand.randint(0, len(potential_image_array)-1)
-            if index not in selected_images_map.keys():
-                selected_images_map[index] = potential_image_array[index]
-
-        images += list(selected_images_map.values())
-            
-    return images
-
-def get_dataset_images(path, n=1000):
-    '''Return a suffled list of n-images in the dataset.
-
-    The images within the list are converted to a numpy matrix. 
-
-    Parameters:
-    path: The path to the datasets' parent directory.
-    n: The number of images to extract from the dataset. Default is 1000.
-    '''
-    dataset_images = (__get_images(path, 'HGG') 
-            + __get_images(path, 'LGG'))
-    rand.shuffle(dataset_images)
-    
-    images = []
-    for i in range(0, n):
-        image_array = wrapper.prepare_image(dataset_images[i])
-        images.append(image_array)
-
-    return images
-
-def get_image_paths(path):
-    '''Return a shuffled list of paths of all images in the dataset. 
-      
-    Parameters: 
-    path: The path to the datatsets' parent directory.
-    '''
-    paths = []
-    for i in range(0, len(os.listdir(path))):
-        if os.listdir(path)[i] == 'convert_to_jpg.sh':
-            break;
-        else:
-            paths += __get_images(path, os.listdir(path)[i])
-    
-    rand.shuffle(paths)
-
-    return paths
 
 def __strip_choice_str(choice_str):
     '''Strip any open or closed brackets from the choice string. 

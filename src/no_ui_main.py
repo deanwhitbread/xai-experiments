@@ -3,7 +3,7 @@
     supervision.
 '''
 __author__ = 'Dean Whitbread'
-__version__ = '06-08-2023'
+__version__ = '07-08-2023'
 
 print('Welcome!\nLoading imports...')
 
@@ -11,7 +11,7 @@ from misc.helpers import get_shortcut_key_str, list_to_str, is_this_choice
 from experiments.experimental_data import ExperimentalData
 from experiments.xai_experiments import XaiExperiment
 
-DATASET_PATH = '../dataset/MICCAI_BraTS_2018_Data_Training'
+DATASET_PATH = '../dataset/images_used'
 MODEL_PATH = '../models/cnn-parameters-improvement-23-0.91.model'
 
 if __name__=='__main__':

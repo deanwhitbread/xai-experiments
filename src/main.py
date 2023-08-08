@@ -4,7 +4,7 @@
     This script handles user choices choosen in the terminal window.
 '''
 __author__ = 'Dean Whitbread'
-__version__ = '24-07-2023'
+__version__ = '07-08-2023'
 
 print('Welcome!\nLoading imports...')
 
@@ -22,7 +22,7 @@ CHOICES = [
            get_shortcut_key_str('Quit', 'q')
         ]
 
-DATASET_PATH = '../dataset/MICCAI_BraTS_2018_Data_Training'
+DATASET_PATH = '../dataset/images_used'
 MODEL_PATH = '../models/cnn-parameters-improvement-23-0.91.model'
 
 if __name__=='__main__':

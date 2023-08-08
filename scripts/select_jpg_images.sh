@@ -37,7 +37,7 @@ do
 			# generate uid
 			case "$hundred_num" in
 				0) 
-					ID="$image_dir-$tens_num"
+					ID="$image_dir-$tens_num.jpg"
 					if [[ ${tens_num:0:1} -ge ${MIN_IMAGE_RANGE:0:1} ]]
 					then
 						mod=$(expr $tens_num % 4)

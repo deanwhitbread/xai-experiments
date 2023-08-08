@@ -3,14 +3,14 @@
     (XAI) experiments. 
 '''
 __author__='Dean Whitbread'
-__version__='03-08-2023'
+__version__='07-08-2023'
 
 from tensorflow.keras.models import load_model
 from misc.helpers import (
-        get_image_paths, get_dataset_images, is_this_choice,
-        get_shortcut_key_str,
+        is_this_choice,get_shortcut_key_str,
         )
 from misc.wrapper import run as predict
+from misc.image_selector import ImageSelector
 from xai.grad_cam_xai_factory import GradCamXaiFactory
 from xai.lime_xai_factory import LimeXaiFactory
 from xai.shap_xai_factory import ShapXaiFactory
@@ -53,11 +53,15 @@ class XaiExperiment:
         Parameters:
         dataset_path: The directory path to the parent dataset folder.
         '''
+
+        selector = ImageSelector(dataset_path)
+
         print('Choosing first image...')
-        paths = get_image_paths(dataset_path)
+        paths = selector.get_image_paths()
 
         print('Generating dataset images list...')
-        images = get_dataset_images(dataset_path)
+        images = selector.get_dataset_images()
+
         return (paths, images)
 
     def get_current_image_path(self):
@@ -139,11 +143,7 @@ class XaiExperiment:
         
         while index < len(self.paths):
             image_path = self.paths[index]
-            image_id = (
-                    image_path[image_path.index('Brats18'):image_path.index('/jpg')]
-                    + '-'
-                    + image_path[image_path.index('output'):image_path.index('.jpg')]
-                        )
+            image_id = image_path[image_path.index('Brats'):]
 
             index += 1
             print(f'Analysing image {index}/{len(self.paths)}...', end='\r')
