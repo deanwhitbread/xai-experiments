@@ -40,9 +40,6 @@ class PixelAnalyser:
         
         (r, g, b) = pixel_colour
         
-        # TODO: Check that both SHAP and Lime ignore colours with same 
-        # saturation. 
-
         if PixelAnalyser.__is_lime(xai_method):
             return (r>b and r>g)
         else:
