@@ -3,18 +3,19 @@
     (XAI) experiments. 
 '''
 __author__='Dean Whitbread'
-__version__='24-07-2023'
+__version__='07-08-2023'
 
 from tensorflow.keras.models import load_model
 from misc.helpers import (
-        get_image_paths, get_dataset_images, is_this_choice,
-        get_shortcut_key_str,
+        is_this_choice,get_shortcut_key_str,
         )
 from misc.wrapper import run as predict
+from misc.image_selector import ImageSelector
 from xai.grad_cam_xai_factory import GradCamXaiFactory
 from xai.lime_xai_factory import LimeXaiFactory
 from xai.shap_xai_factory import ShapXaiFactory
 from analyser.image_analyser import ImageAnalyser
+from doc_writer.csv_writer import CsvWriter
 
 XAI_CHOICES = [
             get_shortcut_key_str('LIME', 'l'),
@@ -52,11 +53,15 @@ class XaiExperiment:
         Parameters:
         dataset_path: The directory path to the parent dataset folder.
         '''
+
+        selector = ImageSelector(dataset_path)
+
         print('Choosing first image...')
-        paths = get_image_paths(dataset_path)
+        paths = selector.get_image_paths()
 
         print('Generating dataset images list...')
-        images = get_dataset_images(dataset_path)
+        images = selector.get_dataset_images()
+
         return (paths, images)
 
     def get_current_image_path(self):
@@ -79,8 +84,8 @@ class XaiExperiment:
                   is None.
         '''
         if not user_cmd:
-            p_score_map, r_score_map = self.__get_all_results()
-            self.display_results(p_score_map, r_score_map)
+            p_score_map, r_score_map, acc_score_map, f1_score_map = self.__get_all_results()
+            self.display_results(p_score_map, r_score_map, acc_score_map, f1_score_map)
         else:
             image_path = self.get_current_image_path()
 
@@ -110,7 +115,7 @@ class XaiExperiment:
         return xai
 
     def __get_tool_scores(self, xai):
-        '''Return the precision and recall score for the tools.
+        '''Return the scores for the tool used.
 
         Parameters:
         xai: The XaiTool object used to explain the input image.  
@@ -119,45 +124,69 @@ class XaiExperiment:
         analyser = ImageAnalyser(tool)
         p_score = analyser.precision_score()
         r_score = analyser.recall_score()
+        acc_score = analyser.accuracy_score()
+        f1_score = analyser.f1_score()
         tool_name = analyser.xai_method
 
-        return (p_score, r_score, tool_name)
+        return (p_score, r_score, acc_score, f1_score, tool_name)
 
     def __get_all_results(self):
-        '''Return the precision score and recall scores for all the XAI
-        tools, across the entire dataset.
+        '''Return the scores for all the XAI tools, across the entire 
+           dataset.
         '''
         index = 0
         p_score_map = {'lime':0,'shap':0,'gradcam':0} # precision score
         r_score_map = {'lime':0,'shap':0,'gradcam':0} # recall score
-
-        while index < 1000:        # len(paths) == 8610
+        acc_score_map = {'lime':0,'shap':0,'gradcam':0} # accuracy score
+        f1_score_map = {'lime':0,'shap':0,'gradcam':0}
+        writer = CsvWriter()
+        
+        while index < len(self.paths):
             image_path = self.paths[index]
-            index += 1
-            print(f'Analysing image {index}...', end='\r')
+            image_id = image_path[image_path.index('Brats'):]
 
-            xai_tools = self.__get_xai_tools(image_path)
+            index += 1
+            print(f'Analysing image {index}/{len(self.paths)}...', end='\r')
+
+            xai_tools = self.__get_xai_tools(image_path) 
 
             for item in xai_tools:
-                p_score, r_score, tool_name = self.__get_tool_scores(item)
+                p_score, r_score, acc_score, f1_score, tool_name = self.__get_tool_scores(item)
 
-                p_score_map[tool_name] = (
-                        (p_score_map[tool_name] + p_score) / index
-                        )
-                r_score_map[tool_name] = (
-                        (r_score_map[tool_name] + r_score) / index
-                        )
+                new_p_score = (p_score_map[tool_name] + p_score) / index
+                new_r_score = (r_score_map[tool_name] + r_score) / index
+                new_acc_score = (acc_score_map[tool_name] + acc_score) / index
+                new_f1_score = (f1_score_map[tool_name] + f1_score) / index
+
+                p_score_map[tool_name] = new_p_score
+                r_score_map[tool_name] = new_r_score
+                acc_score_map[tool_name] = new_acc_score
+                f1_score_map[tool_name] = new_f1_score
+
+                if tool_name=='lime':
+                    file = writer.get_lime_csv_file()
+                elif tool_name=='gradcam':
+                    file = writer.get_gradcam_csv_file()
+                elif tool_name=='shap':
+                    file = writer.get_shap_csv_file()
+                else:
+                    file = None
+
+                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score}')
+                file.write(message)
 
             del xai_tools
 
-        return (p_score_map, r_score_map)
+        return (p_score_map, r_score_map, acc_score_map, f1_score_map)
 
-    def display_results(self, p_score_map, r_score_map):
+    def display_results(self, p_score_map, r_score_map, acc_score_map, f1_score_map):
         '''Return the overall score for the XAI tool.'''
         output = ""
         for name in p_score_map.keys():
-            output += (f"{name.title()}:\n"+(" " * 5)+
-                    f"Precision Score: {p_score_map[name]}\n"+(" " * 5)
-                    +f"Recall Score: {r_score_map[name]}\n"
+            output += (f"{name.title()}:\n"+(" " * 5)
+                    +f"Accuracy Score: {acc_score_map[name]}\n"+(" " * 5)
+                    +f"Precision Score: {p_score_map[name]}\n"+(" " * 5)
+                    +f"Recall Score: {r_score_map[name]}\n"+(" " * 5)
+                    +f"F1 Score: {f1_score_map[name]}\n"
             )
         print(output)
