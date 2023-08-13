@@ -17,7 +17,6 @@ from experiments.xai_experiments import XaiExperiment, XAI_CHOICES
 # Constants
 CHOICES = [
            get_shortcut_key_str('Explain', 'e'),
-           get_shortcut_key_str('Results', 'r'),
            get_shortcut_key_str('Next Image', 'n'),
            get_shortcut_key_str('Quit', 'q')
         ]
@@ -46,7 +45,5 @@ if __name__=='__main__':
             print('\nWhich XAI tool do you want to use?')
             tool_choice = input(f'Choices: {list_to_str(XAI_CHOICES)}: ')
             xai_exp.run(tool_choice)
-        elif is_this_choice(choice, CHOICES[1]):
-            xai_exp.run()
         else:
             print('Invalid choice. Try again.')
