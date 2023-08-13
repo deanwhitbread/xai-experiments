@@ -25,5 +25,4 @@ class GradCamXaiFactory(XaiFactory):
                     self.get_image_path(), 
                     self.get_target_image(), 
                     self.get_model(),
-                    self.get_highlight_image()
                 )

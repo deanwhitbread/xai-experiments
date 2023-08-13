@@ -24,5 +24,4 @@ class LimeXaiFactory(XaiFactory):
         return LimeXaiTool(
                     self.get_target_image(), 
                     self.get_model(),
-                    self.get_highlight_image()
                 )
