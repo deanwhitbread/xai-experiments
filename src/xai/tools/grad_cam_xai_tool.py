@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from analyser.image_analyser import ImageAnalyser
 
 class GradCamXaiTool(XaiTool):
-    def __init__(self, impath, target_im, model, highlight_im):
+    def __init__(self, impath, target_im, model, highlight_im=None):
         '''Constructor for GradCamXaiTool object. 
 
         Parameters:
@@ -115,11 +115,16 @@ class GradCamXaiTool(XaiTool):
 
     def show(self):
         '''Display the XAI tool's explaination.'''
-        fig, ax = plt.subplots(1, 3)
+        if self.highlight_im is not None:
+            fig, ax = plt.subplots(1, 3)
+        else: 
+            fig, ax = plt.subplots(1, 2)
         
         ax[0].imshow(self.get_target_image())
         ax[1].imshow(self.get_explained_image())
-        ax[2].imshow(self.highlight_im)
+    
+        if self.highlight_im is not None:
+            ax[2].imshow(self.highlight_im)
         
         analyser = ImageAnalyser(self)
         print(analyser.results())

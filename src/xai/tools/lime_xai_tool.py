@@ -15,7 +15,7 @@ from analyser.image_analyser import ImageAnalyser
 
 class LimeXaiTool(XaiTool):
 
-    def __init__(self, target_im, model, highlight_im):
+    def __init__(self, target_im, model, highlight_im=None):
         '''Constructor for LimeXaiTool class.
 
         Parameters:
@@ -44,10 +44,16 @@ class LimeXaiTool(XaiTool):
 
     def show(self):
         '''Display the XAI tool's explaination.'''
-        fig, ax = plt.subplots(1,3)
+        if self.highlight_image is not None:
+            fig, ax = plt.subplots(1,3)
+        else:
+            fig, ax = plt.subplots(1,2)
+
         ax[0].imshow(self.get_target_image())
         ax[1].imshow(self.get_explained_image())
-        ax[2].imshow(self.highlight_image)
+    
+        if self.highlight_image is not None:
+            ax[2].imshow(self.highlight_image)
         
         analyser = ImageAnalyser(self)
         print(analyser.results())
