@@ -13,7 +13,7 @@ from misc import wrapper
 import random as rand
 
 IMAGES_PATH = '../../dataset/images_used' 
-rand.seed(13)
+rand.seed(3)
 
 class ImageSelector:
     def __init__(self, dataset_path=IMAGES_PATH):
