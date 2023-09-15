@@ -58,7 +58,7 @@ class ShapXaiTool(XaiTool):
         shap_values = expl_object(
                     self.images[-1],
                     max_evals=5000,
-                    batch_size=100, 
+                    batch_size=50, 
                     outputs=shap.Explanation.argsort.flip[:2]
                 )
         shap.plots.image(shap_values, show=False)
