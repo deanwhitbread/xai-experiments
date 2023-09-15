@@ -62,6 +62,7 @@ class ShapXaiTool(XaiTool):
                     batch_size=50, 
                     outputs=shap.Explanation.argsort.flip[:2]
                 )
+        shap_values.output_names.append("Brain MRI")
         shap.plots.image(shap_values, show=False)
         
         # extract the explained image from the plot
