@@ -27,21 +27,23 @@ class XaiFactory:
         self.td = TumorDetector(self.__get_image_from_path(self.impath))
         self.highlight_im = self.td.highlight_tumor_on_image()
 
-    def __get_image_from_path(self, path, size=240):
+    def __get_image_from_path(self, path):
         '''Return an image from the directory path. 
            
         The returned image will be ready for use with the model. 
 
         Parameters:
         path: The directory path where the target image is stored. 
-        size: The size of the image for the model. Default is 240 pixels. 
         '''
+        image = cv2.imread(path)
+        x, y, depth = image.shape
+
         image = wrapper.crop(
-                    cv2.imread(path)
+                    image
                 )
         image = cv2.resize(
                     image, 
-                    dsize=(size, size), 
+                    dsize=(x, y), 
                     interpolation=cv2.INTER_CUBIC
                 )   
         return image

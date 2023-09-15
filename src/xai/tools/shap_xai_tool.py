@@ -37,7 +37,8 @@ class ShapXaiTool(XaiTool):
         target_im: The target image being classified. 
         model: The classifcation model used to classify the target image. 
         '''
-        masker = shap.maskers.Image('blur(240,240)', self.target_image.shape)
+        x, y, depth = self.target_image.shape
+        masker = shap.maskers.Image(f'blur({x},{y})', self.target_image.shape)
         return shap.Explainer(model, masker)
 
     def show(self):
