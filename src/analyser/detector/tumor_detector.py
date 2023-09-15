@@ -67,10 +67,11 @@ class TumorDetector:
         
 
         points = [y_start, y_end, x_start, x_end]
+        max_size = self.image.shape[0]
 
         for i in range(len(points)):
-            if points[i] > self.image.shape:
-                points[i] = self.image.shape
+            if points[i] > max_size:
+                points[i] = max_size
             elif points[i] < 0:
                 points[i] = 0
 

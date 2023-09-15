@@ -54,8 +54,8 @@ class ImageAnalyser:
         '''Return the F1 score of the explained image.'''
         p_score = self.precision_score()
         r_score = self.recall_score()
-
-        return (2*p_score*r_score) / (p_score+r_score)
+         
+        return (2*p_score*r_score) / (p_score+r_score) if p_score and r_score else float(0)
 
     def results(self):
         '''Display the precision score and recall score.'''
