@@ -9,7 +9,7 @@ from tensorflow.keras.models import load_model
 from misc.helpers import (
         is_this_choice,get_shortcut_key_str,
         )
-from misc.wrapper import run as predict
+from misc.wrapper import run as predict, is_tumour
 from misc.image_selector import ImageSelector
 from xai.grad_cam_xai_factory import GradCamXaiFactory
 from xai.lime_xai_factory import LimeXaiFactory
@@ -134,19 +134,30 @@ class XaiExperiment:
         '''Return the scores for all the XAI tools, across the entire 
            dataset.
         '''
-        index = 0
+        index=0
+        dataset_size = len(self.paths)
+        max_tumour=max_non_tumour = dataset_size//4
         p_score_map = {'lime':0,'shap':0,'gradcam':0} # precision score
         r_score_map = {'lime':0,'shap':0,'gradcam':0} # recall score
         acc_score_map = {'lime':0,'shap':0,'gradcam':0} # accuracy score
         f1_score_map = {'lime':0,'shap':0,'gradcam':0}
         writer = CsvWriter()
         
-        while index < len(self.paths):
+        while (max_tumour or max_non_tumour) and index<dataset_size:
             image_path = self.paths[index]
             image_id = image_path[image_path.index('Brats'):]
+            tumour_present = is_tumour(image_path, self.model)
+
+            if tumour_present and max_tumour:
+                max_tumour -= 1
+            elif not tumour_present and max_non_tumour:
+                max_non_tumour -= 1
+            else:
+                index += 1
+                continue
 
             index += 1
-            print(f'Analysing image {index}/{len(self.paths)}...', end='\r')
+            print(f'Analysing image: {image_id}')
 
             xai_tools = self.__get_xai_tools(image_path) 
 
@@ -172,7 +183,7 @@ class XaiExperiment:
                 else:
                     file = None
 
-                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score}')
+                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score},{tumour_present}')
                 file.write(message)
 
             del xai_tools

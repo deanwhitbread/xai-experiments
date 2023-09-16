@@ -4,7 +4,7 @@
     The class contains only static methods. 
 '''
 __author__='Dean Whitbread'
-__version__='21-07-2023'
+__version__='15-09-2023'
 
 class PixelAnalyser:
     
@@ -39,11 +39,12 @@ class PixelAnalyser:
             raise ValueError('Parameter must be a RGB tuple not RGBA.')
         
         (r, g, b) = pixel_colour
-        
         if PixelAnalyser.__is_lime(xai_method):
-            return (r>b and r>g)
-        else:
-            return ((b>r and b>g) or (g>r and g>b and g>140 and b>r))
+            return not (g>r and g>b)
+        elif PixelAnalyser.__is_shap(xai_method):
+            return not (r>b and r>g)
+        elif PixelAnalyser.__is_gradcam(xai_method):
+            return r>b and g>b and r>=160 and g<=160
 
     @staticmethod
     def __is_RGBA_colour(pixel_colour):
@@ -63,4 +64,23 @@ class PixelAnalyser:
         xai_tool: The XAI tool used to explain the prediction. 
         '''
         return xai_tool=='lime'
+    
+    @staticmethod
+    def __is_shap(xai_tool):
+        '''Return if the explainable AI (XAI) method used to explain the
+           image was LIME.
 
+        Parameters:
+        xai_tool: The XAI tool used to explain the prediction. 
+        '''
+        return xai_tool=='shap'
+
+    @staticmethod
+    def __is_gradcam(xai_tool):
+        '''Return if the explainable AI (XAI) method used to explain the
+           image was LIME.
+
+        Parameters:
+        xai_tool: The XAI tool used to explain the prediction.
+        '''
+        return xai_tool=='gradcam'

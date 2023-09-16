@@ -10,7 +10,6 @@ from analyser.detector.drawer.image_drawer import ImageDrawer
 from analyser.detector.pixel_range import PixelRange
 
 RGB_THRESHOLD = (130,130,130)
-IMAGE_SIZE = 240
 
 class TumorDetector:
     def __init__(self, image):
@@ -68,10 +67,11 @@ class TumorDetector:
         
 
         points = [y_start, y_end, x_start, x_end]
+        max_size = self.image.shape[0]
 
         for i in range(len(points)):
-            if points[i] > IMAGE_SIZE:
-                points[i] = IMAGE_SIZE
+            if points[i] > max_size:
+                points[i] = max_size
             elif points[i] < 0:
                 points[i] = 0
 

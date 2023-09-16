@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 from doc_writer.file import File
 
-CSV_TITLES = 'id,accuracy,precision,recall,f1'
+CSV_TITLES = 'id,accuracy,precision,recall,f1,tumour_present'
 
 class CsvWriter:
     def __init__(self):

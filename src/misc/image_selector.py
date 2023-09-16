@@ -28,9 +28,14 @@ class ImageSelector:
     def get_image_paths(self):
         '''Return a list containing the paths to the images.'''
         paths = []
+        max_paths = 1000
         for image in os.listdir(self.dataset_path):
             paths.append(f'{self.dataset_path}/{image}')
-        
+            max_paths -= 1
+
+            if not max_paths:
+                break
+
         if len(paths):
            rand.shuffle(paths)
 

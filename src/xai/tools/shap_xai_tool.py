@@ -37,7 +37,8 @@ class ShapXaiTool(XaiTool):
         target_im: The target image being classified. 
         model: The classifcation model used to classify the target image. 
         '''
-        masker = shap.maskers.Image('blur(240,240)', self.target_image.shape)
+        x, y, depth = self.target_image.shape
+        masker = shap.maskers.Image(f'blur({x},{y})', self.target_image.shape)
         return shap.Explainer(model, masker)
 
     def show(self):
@@ -58,9 +59,10 @@ class ShapXaiTool(XaiTool):
         shap_values = expl_object(
                     self.images[-1],
                     max_evals=5000,
-                    batch_size=100, 
+                    batch_size=50, 
                     outputs=shap.Explanation.argsort.flip[:2]
                 )
+        shap_values.output_names.append("Brain MRI")
         shap.plots.image(shap_values, show=False)
         
         # extract the explained image from the plot
