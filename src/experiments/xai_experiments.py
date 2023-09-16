@@ -109,8 +109,8 @@ class XaiExperiment:
                     the XAI tool.
         '''
         xai = []
-        #xai.append(LimeXaiFactory(image_path, self.model))
-        #xai.append(ShapXaiFactory(image_path, self.model, self.images))
+        xai.append(LimeXaiFactory(image_path, self.model))
+        xai.append(ShapXaiFactory(image_path, self.model, self.images))
         xai.append(GradCamXaiFactory(image_path, self.model))
         return xai
 
@@ -146,10 +146,11 @@ class XaiExperiment:
         while (max_tumour or max_non_tumour) and index<dataset_size:
             image_path = self.paths[index]
             image_id = image_path[image_path.index('Brats'):]
-            
-            if is_tumour(image_path, self.model) and max_tumour:
+            tumour_present = is_tumour(image_path, self.model)
+
+            if tumour_present and max_tumour:
                 max_tumour -= 1
-            elif not is_tumour(image_path, self.model) and max_non_tumour:
+            elif not tumour_present and max_non_tumour:
                 max_non_tumour -= 1
             else:
                 index += 1
@@ -182,7 +183,7 @@ class XaiExperiment:
                 else:
                     file = None
 
-                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score}')
+                message =(f'{image_id},{new_acc_score},{new_p_score},{new_r_score},{new_f1_score},{tumour_present}')
                 file.write(message)
 
             del xai_tools
