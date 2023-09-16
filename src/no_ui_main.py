@@ -17,5 +17,9 @@ MODEL_PATH = '../models/cnn-parameters-improvement-23-0.91.model'
 if __name__=='__main__':
     data = ExperimentalData(DATASET_PATH, MODEL_PATH)
     xai_exp = XaiExperiment(data)
-    xai_exp.run()
+    try:
+        xai_exp.run()
+    except Exception as e:
+        with open('runtime_errors.txt', 'a') as report:
+            report.write('\n' + e)
     print('Goodbye.')
