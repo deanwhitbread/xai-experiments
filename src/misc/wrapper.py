@@ -44,6 +44,10 @@ def get_prediction(path, model):
     img = prepare_image(path)
     return model.predict(img, verbose=0)
 
+def is_tumour(path, model):
+    predictions = get_prediction(path, model)
+    return np.where(predictions[0] > 0.5, True, False)[0]
+
 def run(path, model):
     predictions = get_prediction(path, model)
     return np.where(predictions[0] > 0.5, 'Tumour', 'Non-Tumour')[0]
